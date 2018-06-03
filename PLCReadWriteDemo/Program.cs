@@ -11,18 +11,19 @@ namespace PLCReadWriteDemo
     {
         static void Main(string[] args)
         {
-            PLCDataCollection<int> collection = new PLCDataCollection<int>();
-            collection.Add("温度数据集合", "D1", 1);
-            collection.Add("温度数据集合", "D2", 1);
-            collection.Add("温度数据集合", "D3", 1);
-            collection.Add("温度数据集合", "D4", 1);
-            collection.Add("温度数据集合", "D5", 1);
-            collection.Add("温度数据集合", "D6", 1);
+            var collection = new PLCDataCollection<bool>("温度数据集合");
+            collection.AddBit("温度数据1", "D1.1",10);
 
 
-            foreach (PLCData<int> item in collection)
+            foreach (var item in collection)
             {
-                Console.WriteLine(item.Data.ToString());
+                Console.WriteLine(item.ToString());
+            }
+            collection.Remove("温度数据1");
+
+            foreach (var item in collection)
+            {
+                Console.WriteLine(item.ToString());
             }
 
             Console.ReadKey();
