@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,14 +42,13 @@ namespace PLCReadWrite.PLCControl
     /// <summary>
     /// PLC数据集合（仅支持同一种地址前缀）
     /// </summary>
-    public class PLCDataCollection<T> where T : struct
+    public class PLCDataCollection<T> : IEnumerable where T : struct
     {
         public string Name { get; set; }
         public string Prefix { get; set; }
         public int StartAddr { get; set; }
         public int DataLength { get; set; }
         public bool IsBitCollection { get; set; }
-
         public DataType DataType { get; set; }
         public string FullStartAddress
         {
@@ -58,14 +58,14 @@ namespace PLCReadWrite.PLCControl
         /// <summary>
         /// 集合内部储存结构
         /// </summary>
-        public List<PLCData<T>> PlcDataList = new List<PLCData<T>>();
+        private List<PLCData<T>> m_plcDataList = new List<PLCData<T>>();
 
         /// <summary>
         /// 清空数据集合数据
         /// </summary>
         public void ClearData()
         {
-            PlcDataList.ForEach(d =>
+            m_plcDataList.ForEach(d =>
             {
                 d.Data = default(T);
                 d.OldData = default(T);
@@ -79,7 +79,7 @@ namespace PLCReadWrite.PLCControl
         /// <returns></returns>
         private bool Add(PLCData<T> plcData)
         {
-            if (PlcDataList.Count == 0)
+            if (m_plcDataList.Count == 0)
             {
                 this.Prefix = plcData.Prefix;
                 this.IsBitCollection = plcData.IsBit;
@@ -92,21 +92,21 @@ namespace PLCReadWrite.PLCControl
 
                 if (IsBitCollection)
                 {
-                    matchIndex = PlcDataList.FindIndex(d =>
+                    matchIndex = m_plcDataList.FindIndex(d =>
                         d.Prefix == plcData.Prefix
                         && d.Addr == plcData.Addr
                         && d.Bit == plcData.Bit);
                 }
                 else
                 {
-                    matchIndex = PlcDataList.FindIndex(d =>
+                    matchIndex = m_plcDataList.FindIndex(d =>
                         d.Prefix == plcData.Prefix
                         && d.Addr == plcData.Addr);
                 }
 
                 if (matchIndex < 0)
                 {
-                    PlcDataList.Add(plcData);
+                    m_plcDataList.Add(plcData);
                     Update();
                     return true;
                 }
@@ -225,7 +225,7 @@ namespace PLCReadWrite.PLCControl
         /// <param name="name"></param>
         public void Remove(string name)
         {
-            PlcDataList.RemoveAll(d => d.Name == name);
+            m_plcDataList.RemoveAll(d => d.Name == name);
             Update();
         }
         /// <summary>
@@ -237,7 +237,7 @@ namespace PLCReadWrite.PLCControl
             int endAddr = 0;
             int endUnitLength = 1;
 
-            this.PlcDataList.ForEach(d =>
+            this.m_plcDataList.ForEach(d =>
             {
                 switch (DataType)
                 {
@@ -272,5 +272,12 @@ namespace PLCReadWrite.PLCControl
             this.DataLength = (endAddr + endUnitLength) - startAddr;
         }
 
+        public IEnumerator GetEnumerator()
+        {
+            for (int index = 0; index < m_plcDataList.Count; index++)
+            {
+                yield return m_plcDataList[index];
+            }
+        }
     }
 }

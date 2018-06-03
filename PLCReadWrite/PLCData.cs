@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace PLCReadWrite.PLCControl
 {
-    public class PLCData<T> where T: struct
+    public class PLCData<T> where T : struct
     {
+        private T m_data = default(T);
+        private T m_oldData = default(T);
+
         public string Name { get; set; }
         public string SecondName { get; set; }
         public string Prefix { get; set; }
@@ -20,10 +23,6 @@ namespace PLCReadWrite.PLCControl
         /// </summary>
         public int Length { get; set; }
         public bool IsBit { get; set; }
-
-
-        private T m_data = default(T);
-        private T m_oldData = default(T);
 
         public T Data
         {
@@ -58,6 +57,7 @@ namespace PLCReadWrite.PLCControl
                 return string.Format("{0}{1}", Prefix, Addr);
             }
         }
+
     }
 }
 
