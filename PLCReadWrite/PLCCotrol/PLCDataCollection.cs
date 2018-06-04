@@ -37,7 +37,7 @@ namespace PLCReadWrite.PLCControl
     /// <summary>
     /// PLC数据集合（仅支持同一种地址前缀）
     /// </summary>
-    public class PLCDataCollection<T> : IEnumerable where T : struct
+    public class PLCDataCollection<T> : IEnumerable<PLCData<T>> where T : struct
     {
         public string Name { get; private set; }
         public string Prefix { get; private set; }
@@ -55,6 +55,20 @@ namespace PLCReadWrite.PLCControl
         /// 集合内部储存结构
         /// </summary>
         private List<PLCData<T>> m_plcDataList = new List<PLCData<T>>();
+
+        public PLCData<T> this[int index]
+        {
+            get { return m_plcDataList[index]; }
+            set { m_plcDataList[index] = value; }
+        }
+
+        /// <summary>
+        /// 获取集合中数据个数
+        /// </summary>
+        public int Count
+        {
+            get { return m_plcDataList.Count; }
+        }
 
         public PLCDataCollection(string name)
         {
@@ -94,7 +108,6 @@ namespace PLCReadWrite.PLCControl
             }
 
         }
-
 
         /// <summary>
         /// 清空数据集合
@@ -163,14 +176,9 @@ namespace PLCReadWrite.PLCControl
         /// <param name="name"></param>
         /// <param name="addr"></param>
         /// <returns></returns>
-        public bool AddBit(string name, string addr, string secondName = null)
+        private bool AddBit(string name, string addr, string secondName = null)
         {
             if (DataType != DataType.BoolAddress)
-            {
-                return false;
-            }
-
-            if (addr.IndexOf('.') < 0)
             {
                 return false;
             }
@@ -195,14 +203,9 @@ namespace PLCReadWrite.PLCControl
         /// <param name="addr"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public bool AddBit(string name, string addr, int count)
+        private bool AddBit(string name, string addr, int count)
         {
             if (DataType != DataType.BoolAddress)
-            {
-                return false;
-            }
-
-            if (addr.IndexOf('.') < 0)
             {
                 return false;
             }
@@ -233,6 +236,10 @@ namespace PLCReadWrite.PLCControl
         /// <returns></returns>
         public bool Add(string name, string addr, string secondName = null)
         {
+            if (addr.Contains('.'))
+            {
+                return AddBit(name, addr, secondName);
+            }
             PLCData<T> plcData = new PLCData<T>();
             plcData.Name = name;
             plcData.SecondName = secondName;
@@ -251,6 +258,11 @@ namespace PLCReadWrite.PLCControl
         /// <returns></returns>
         public bool Add(string name, string addr, int count)
         {
+            if (addr.Contains('.'))
+            {
+                return AddBit(name, addr, count);
+            }
+
             bool ret = false;
             int baseAddr = 0;
             baseAddr = int.Parse(addr.Substring(1));
@@ -272,9 +284,9 @@ namespace PLCReadWrite.PLCControl
         /// 从PLC数据集中移除一个地址
         /// </summary>
         /// <param name="name"></param>
-        public void Remove(string name)
+        public void Remove(PLCData<T> plcData)
         {
-            m_plcDataList.RemoveAll(d => d.Name == name);
+            m_plcDataList.Remove(plcData);
             Update();
         }
         /// <summary>
@@ -303,12 +315,28 @@ namespace PLCReadWrite.PLCControl
             DataLength = (endAddr + endUnitLength) - startAddr;
         }
 
-        public IEnumerator GetEnumerator()
+
+        //public void ForEach(Action<PLCData<T>> action)
+        //{
+        //    foreach (var item in m_plcDataList)
+        //    {
+        //        action(item);
+        //    }
+        //}
+
+        #region IEnumerable接口实现
+        public IEnumerator<PLCData<T>> GetEnumerator()
         {
             for (int index = 0; index < m_plcDataList.Count; index++)
             {
                 yield return m_plcDataList[index];
             }
         }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }
