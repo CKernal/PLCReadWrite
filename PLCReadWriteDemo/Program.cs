@@ -11,43 +11,43 @@ namespace PLCReadWriteDemo
 {
     class Program
     {
+        private static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         static void Main(string[] args)
         {
-            var collection = new PLCDataCollection("温度数据集合");
-            collection.Add("温度数据", "D100");
-            collection.Add("温度数据", "D101");
-            collection.Add("温度数据", "D102");
-            collection.Add("温度数据", "D103");
+            var collection = new PLCDataCollection<bool>("温度数据集合");
+            sw.Restart();
+            collection.Add("温度数据", "D100",800);
+            sw.Stop();
+            Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
-
-            foreach (var item in collection)
-            {
-                Console.WriteLine(item.ToString());
-            }
+            //foreach (var item in collection)
+            //{
+            //    Console.WriteLine(item.ToString());
+            //}
+            var query = collection.Where(p => p.FullAddress == "D102").ToList();
 
             Console.WriteLine("*************************************");
 
             IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
             PLCControl plcControl = new PLCControl(plc);
-            //plcControl.PlcDataCollectionDictionary.AddOrUpdate(0, collection, (oldkey, oldvalue) => collection);
 
-            //var co = plcControl.PlcDataCollectionDictionary[0];
 
-            //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            //sw.Restart();
+            sw.Restart();
+            plcControl.ReadCollection(ref collection);
+            sw.Stop();
+            Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
-            //plcControl.ReadCollection(ref co);
+            sw.Restart();
+            plcControl.ReadCollection(ref collection);
+            sw.Stop();
+            Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
-            //sw.Stop();
-            //Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
-
-            //foreach (var item in co)
+            //foreach (var item in collection)
             //{
             //    Console.WriteLine(item.ToString());
             //}
 
             Console.WriteLine("*************************************");
-
             Console.ReadKey();
         }
     }

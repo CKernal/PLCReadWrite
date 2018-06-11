@@ -122,11 +122,11 @@ namespace PLCReadWrite.PLCControl
         /// </summary>
         public void ClearData()
         {
-            m_plcDataList.ForEach(d =>
+            foreach (var d in m_plcDataList)
             {
                 d.Data = default(T);
                 d.OldData = default(T);
-            });
+            }
             Update();
         }
         /// <summary>
@@ -246,7 +246,7 @@ namespace PLCReadWrite.PLCControl
             plcData.Prefix = addr[0].ToString();
             plcData.Addr = int.Parse(addr.Substring(1));
 
-            return this.Add(plcData);
+            return Add(plcData);
         }
 
         /// <summary>
@@ -304,25 +304,25 @@ namespace PLCReadWrite.PLCControl
             int endAddr = 0;
             int endUnitLength = 1;
 
-            m_plcDataList.ForEach(d =>
+            foreach (var d in m_plcDataList)
             {
                 d.Length = UnitLength;
                 if (d.Addr < startAddr) { startAddr = d.Addr; }
                 if (d.Addr > endAddr) { endAddr = d.Addr; endUnitLength = d.Length; }
-            });
+            }
 
             StartAddr = startAddr;
             DataLength = (endAddr + endUnitLength) - startAddr;
         }
 
 
-        //public void ForEach(Action<PLCData<T>> action)
-        //{
-        //    foreach (var item in m_plcDataList)
-        //    {
-        //        action(item);
-        //    }
-        //}
+        public void ForEach(Action<PLCData<T>> action)
+        {
+            foreach (var item in m_plcDataList)
+            {
+                action(item);
+            }
+        }
 
         #region IEnumerable接口实现
         public IEnumerator<PLCData<T>> GetEnumerator()

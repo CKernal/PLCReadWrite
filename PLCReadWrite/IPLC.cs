@@ -28,13 +28,13 @@ namespace PLCReadWrite
         /// <returns>关闭连接，不需要查看IsSuccess属性查看</returns>
         OperateResult ConnectClose();
 
-        /// <summary>
-        /// 从PLC中读取想要的数据，返回读取结果
-        /// </summary>
-        /// <param name="address">读取地址，格式为"M100","D100","W1A0"</param>
-        /// <param name="length">读取的数据长度</param>
-        /// <returns>带成功标志的结果数据对象</returns>
-        OperateResult<byte[]> Read(string address, ushort length);
+        ///// <summary>
+        ///// 从PLC中读取想要的数据，返回读取结果
+        ///// </summary>
+        ///// <param name="address">读取地址，格式为"M100","D100","W1A0"</param>
+        ///// <param name="length">读取的数据长度</param>
+        ///// <returns>带成功标志的结果数据对象</returns>
+        //OperateResult<byte[]> Read(string address, ushort length);
 
         /// <summary>
         /// 从PLC中批量读取位软元件，返回读取结果

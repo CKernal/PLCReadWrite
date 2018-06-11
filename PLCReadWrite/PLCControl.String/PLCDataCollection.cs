@@ -48,11 +48,11 @@ namespace PLCReadWrite.PLCControl.String
         /// </summary>
         public void ClearData()
         {
-            m_plcDataList.ForEach(d =>
+            foreach (var d in m_plcDataList)
             {
                 d.Data = "";
                 d.OldData = "";
-            });
+            }
             Update();
         }
         /// <summary>
@@ -222,7 +222,7 @@ namespace PLCReadWrite.PLCControl.String
             int endAddr = 0;
             int endUnitLength = 1;
 
-            this.m_plcDataList.ForEach(d =>
+            foreach (var d in m_plcDataList)
             {
                 switch (d.DataType)
                 {
@@ -252,7 +252,7 @@ namespace PLCReadWrite.PLCControl.String
                 if (d.Addr < startAddr) { startAddr = d.Addr; }
                 if (d.Addr > endAddr) { endAddr = d.Addr; endUnitLength = d.Length; }
             }
-                );
+
             this.StartAddr = startAddr;
             this.DataLength = (endAddr + endUnitLength) - startAddr;
         }
