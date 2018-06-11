@@ -46,15 +46,6 @@ namespace PLCReadWrite.PLCControl.String
         public PlcControl(IPLC plc)
         {
             m_plc = plc;
-
-            OnPlcStatusChanged += MelsecPlcControl_OnPlcStatusChanged;
-        }
-
-        void MelsecPlcControl_OnPlcStatusChanged(object sender, EventArgs e)
-        {
-            PlcStatusArgs s = (PlcStatusArgs)e;
-            PlcControl p = (PlcControl)sender;
-            Console.WriteLine("PLC Status Changed: {0} @ {1}:{2}", s.Status.ToString(), p.IpAddress, p.Port);
         }
 
         public string IpAddress
@@ -174,11 +165,11 @@ namespace PLCReadWrite.PLCControl.String
                 System.Collections.BitArray bitArray = new System.Collections.BitArray(read.Content);
                 int sAddr = plcDataCollection.StartAddr;
 
-                plcDataCollection.PlcDataList.ForEach(d =>
+                foreach (var d in plcDataCollection)
                 {
                     int index = ((d.Addr - sAddr) * 16) + d.Bit;
                     d.Data = bitArray[index].ToString();
-                });
+                }
             }
             return IsConnected;
         }
@@ -193,7 +184,8 @@ namespace PLCReadWrite.PLCControl.String
             if (IsConnected)
             {
                 int sAddr = plcDataCollection.StartAddr;
-                plcDataCollection.PlcDataList.ForEach(d =>
+
+                foreach (var d in plcDataCollection)
                 {
                     //根据数据类型为每个PLCData赋值
                     int index = d.Addr - sAddr;
@@ -223,7 +215,8 @@ namespace PLCReadWrite.PLCControl.String
                             d.Data = Encoding.ASCII.GetString(read.Content, index * 2, d.Length * 2);
                             break;
                     }
-                });
+                }
+
             }
 
             return IsConnected;

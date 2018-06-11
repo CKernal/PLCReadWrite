@@ -92,5 +92,10 @@ namespace PLCReadWrite.PLCControl.String
                 return string.Format("{0}{1}", Prefix, Addr);
             }
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}={1}", FullAddress, Data);
+        }
     }
 }

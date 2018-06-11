@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,26 +10,45 @@ namespace PLCReadWrite.PLCControl.String
     /// <summary>
     /// PLC数据集合（仅支持同一种地址前缀）
     /// </summary>
-    public class PLCDataCollection
+    public class PLCDataCollection : IEnumerable<PLCData>
     {
-        public string Name { get; set; }
-        public string Prefix { get; set; }
-        public int StartAddr { get; set; }
-        public int DataLength { get; set; }
-        public bool IsBitCollection { get; set; }
+        public string Name { get; private set; }
+        public string Prefix { get; private set; }
+        public int StartAddr { get; private set; }
+        public int DataLength { get; private set; }
+        public bool IsBitCollection { get; private set; }
         public string FullStartAddress
         {
             get { return string.Format("{0}{1}", Prefix, StartAddr); }
         }
 
-        public List<PLCData> PlcDataList = new List<PLCData>();
+        private List<PLCData> m_plcDataList = new List<PLCData>();
+
+        public PLCData this[int index]
+        {
+            get { return m_plcDataList[index]; }
+            set { m_plcDataList[index] = value; }
+        }
+
+        public PLCDataCollection(string name)
+        {
+            Name = name;
+        }
 
         /// <summary>
-        /// 清空数据集
+        /// 清空数据集合
         /// </summary>
         public void Clear()
         {
-            PlcDataList.ForEach(d =>
+            m_plcDataList.Clear();
+            Update();
+        }
+        /// <summary>
+        /// 清空数据集数据
+        /// </summary>
+        public void ClearData()
+        {
+            m_plcDataList.ForEach(d =>
             {
                 d.Data = "";
                 d.OldData = "";
@@ -42,7 +62,7 @@ namespace PLCReadWrite.PLCControl.String
         /// <returns></returns>
         private bool Add(PLCData plcData)
         {
-            if (PlcDataList.Count == 0)
+            if (m_plcDataList.Count == 0)
             {
                 this.Prefix = plcData.Prefix;
                 this.IsBitCollection = plcData.IsBit;
@@ -55,21 +75,21 @@ namespace PLCReadWrite.PLCControl.String
 
                 if (IsBitCollection)
                 {
-                    matchIndex = PlcDataList.FindIndex(d =>
+                    matchIndex = m_plcDataList.FindIndex(d =>
                         d.Prefix == plcData.Prefix
                         && d.Addr == plcData.Addr
                         && d.Bit == plcData.Bit);
                 }
                 else
                 {
-                    matchIndex = PlcDataList.FindIndex(d =>
+                    matchIndex = m_plcDataList.FindIndex(d =>
                         d.Prefix == plcData.Prefix
                         && d.Addr == plcData.Addr);
                 }
 
                 if (matchIndex < 0)
                 {
-                    PlcDataList.Add(plcData);
+                    m_plcDataList.Add(plcData);
                     Update();
                     return true;
                 }
@@ -190,7 +210,7 @@ namespace PLCReadWrite.PLCControl.String
         /// <param name="name"></param>
         public void Remove(string name)
         {
-            PlcDataList.RemoveAll(d => d.Name == name);
+            m_plcDataList.RemoveAll(d => d.Name == name);
             Update();
         }
         /// <summary>
@@ -202,7 +222,7 @@ namespace PLCReadWrite.PLCControl.String
             int endAddr = 0;
             int endUnitLength = 1;
 
-            this.PlcDataList.ForEach(d =>
+            this.m_plcDataList.ForEach(d =>
             {
                 switch (d.DataType)
                 {
@@ -237,6 +257,18 @@ namespace PLCReadWrite.PLCControl.String
             this.DataLength = (endAddr + endUnitLength) - startAddr;
         }
 
+        public IEnumerator<PLCData> GetEnumerator()
+        {
+            for (int index = 0; index < m_plcDataList.Count; index++)
+            {
+                yield return m_plcDataList[index];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 
 }
