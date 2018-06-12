@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PLCReadWrite.PLCControl
 {
@@ -166,7 +164,6 @@ namespace PLCReadWrite.PLCControl
             }
             return false;
         }
-
         /// <summary>
         /// 向PLC数据集中添加一个Bit地址
         /// </summary>
@@ -227,7 +224,6 @@ namespace PLCReadWrite.PLCControl
 
             return ret;
         }
-
         /// <summary>
         /// 向PLC数据集中添加一个地址
         /// </summary>
@@ -250,7 +246,6 @@ namespace PLCReadWrite.PLCControl
             };
             return Add(plcData);
         }
-
         /// <summary>
         /// 向PLC数据集中添加多个地址，在原基础地址上自动添加count个地址
         /// </summary>
@@ -280,7 +275,6 @@ namespace PLCReadWrite.PLCControl
 
             return ret;
         }
-
         /// <summary>
         /// 从PLC数据集中移除一个地址
         /// </summary>

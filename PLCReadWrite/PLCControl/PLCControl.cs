@@ -1,8 +1,5 @@
 ﻿using HslCommunication;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 
 namespace PLCReadWrite.PLCControl
