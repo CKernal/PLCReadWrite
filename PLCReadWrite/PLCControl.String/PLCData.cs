@@ -41,6 +41,12 @@ namespace PLCReadWrite.PLCControl.String
 
     public class PLCData
     {
+        private const int TIMEOUT_TICKS = 50000000;
+
+        private string _data = "";
+        private string _oldData = "";
+        private DateTime m_lastUpdate;
+
         public string Name { get; set; }
         public string SecondName { get; set; }
         public string Prefix { get; set; }
@@ -55,10 +61,6 @@ namespace PLCReadWrite.PLCControl.String
         public int Length { get; set; }
         public bool IsBit { get; set; }
 
-
-        private string _data = "";
-        private string _oldData = "";
-
         public string Data
         {
             get { return _data; }
@@ -66,19 +68,24 @@ namespace PLCReadWrite.PLCControl.String
             {
                 _oldData = _data;
                 _data = value;
-                LastUpdate = DateTime.Now;
+                m_lastUpdate = DateTime.Now;
             }
         }
+
         public string OldData
         {
             get { return _oldData; }
             set { _oldData = value; }
         }
 
-        public DateTime LastUpdate { get; set; }
         public bool Timeout
         {
-            get { return (DateTime.Now.Ticks - LastUpdate.Ticks) > 5000 * 10000; }
+            get { return (DateTime.Now.Ticks - m_lastUpdate.Ticks) > TIMEOUT_TICKS; }
+        }
+
+        public bool IsChanged
+        {
+            get { return Data != OldData; }
         }
 
         public string FullAddress

@@ -22,6 +22,9 @@ namespace PLCReadWrite.PLCControl.String
             get { return string.Format("{0}{1}", Prefix, StartAddr); }
         }
 
+        /// <summary>
+        /// 集合内部储存结构
+        /// </summary>
         private List<PLCData> m_plcDataList = new List<PLCData>();
 
         public PLCData this[int index]
@@ -203,11 +206,6 @@ namespace PLCReadWrite.PLCControl.String
             return ret;
         }
 
-
-        /// <summary>
-        /// 从PLC数据集中移除一个地址
-        /// </summary>
-        /// <param name="name"></param>
         public void Remove(string name)
         {
             m_plcDataList.RemoveAll(d => d.Name == name);

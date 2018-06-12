@@ -8,51 +8,37 @@ using System.Threading.Tasks;
 
 namespace PLCReadWrite.PLCControl.String
 {
-    public enum PlcStatus
-    {
-        Connected,
-        Unconnected,
-    }
-    public class PlcStatusArgs : EventArgs
-    {
-        private PlcStatus plcStatus;
-
-        public PlcStatus Status
-        {
-            get { return plcStatus; }
-            set { plcStatus = value; }
-        }
-
-        public PlcStatusArgs(PlcStatus status)
-        {
-            this.plcStatus = status;
-        }
-    }
     /// <summary>
     /// PLC读写控制类，提供批量读写方法
     /// </summary>
-    public class PlcControl
+    public class PLCControl
     {
         private IPLC m_plc;
         private bool m_isConnected = false;
-
-        public ConcurrentDictionary<int, PLCDataCollection> PlcDataCollectionDictionary = new ConcurrentDictionary<int, PLCDataCollection>();
+        private ConcurrentDictionary<int, PLCDataCollection> m_plcDataCollectionDictionary;
 
         /// <summary>
         /// Plc连接状态发生改变时触发
         /// </summary>
         public event EventHandler OnPlcStatusChanged;
 
-        public PlcControl(IPLC plc)
+        public PLCControl(IPLC plc)
         {
             m_plc = plc;
+            m_plcDataCollectionDictionary = new ConcurrentDictionary<int, PLCDataCollection>();
         }
 
+        /// <summary>
+        /// 获取IP地址
+        /// </summary>
         public string IpAddress
         {
             get { return m_plc.IpAddress; }
         }
 
+        /// <summary>
+        /// 获取端口号
+        /// </summary>
         public int Port
         {
             get { return m_plc.Port; }
@@ -66,7 +52,7 @@ namespace PLCReadWrite.PLCControl.String
             {
                 return m_isConnected;
             }
-            set
+            private set
             {
                 if (value != m_isConnected)
                 {
@@ -79,6 +65,10 @@ namespace PLCReadWrite.PLCControl.String
             }
         }
 
+        /// <summary>
+        /// 尝试建立连接
+        /// </summary>
+        /// <returns></returns>
         public bool Open()
         {
             try
@@ -101,6 +91,9 @@ namespace PLCReadWrite.PLCControl.String
             }
         }
 
+        /// <summary>
+        /// 关闭连接
+        /// </summary>
         public void Close()
         {
             if (IsConnected)
@@ -154,7 +147,7 @@ namespace PLCReadWrite.PLCControl.String
             return IsConnected;
         }
 
-        private bool ReadCollectionWordToBit(ref PLCDataCollection plcDataCollection)
+        private bool ReadCollectionBit(ref PLCDataCollection plcDataCollection)
         {
             string startAddr = plcDataCollection.FullStartAddress;
             ushort uSize = (ushort)plcDataCollection.DataLength;
@@ -231,7 +224,7 @@ namespace PLCReadWrite.PLCControl.String
             if (plcDataCollection.DataLength <= 0) { return false; }
             if (plcDataCollection.IsBitCollection)
             {
-                return ReadCollectionWordToBit(ref plcDataCollection);
+                return ReadCollectionBit(ref plcDataCollection);
             }
             return ReadCollectionNormal(ref plcDataCollection);
         }
@@ -261,5 +254,54 @@ namespace PLCReadWrite.PLCControl.String
             IsConnected = write.IsSuccess;
             return IsConnected;
         }
+
+        #region 内部数据集合操作
+        /// <summary>
+        /// 获取内部数据集合
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public PLCDataCollection GetCollection(int key)
+        {
+            if (m_plcDataCollectionDictionary.ContainsKey(key))
+            {
+                return m_plcDataCollectionDictionary[key];
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 添加或更新内部数据集合
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="collection"></param>
+        public void AddOrUpdateCollection(int key, PLCDataCollection collection)
+        {
+            m_plcDataCollectionDictionary.AddOrUpdate(key, collection, (oldkey, oldvalue) => collection);
+        }
+        #endregion
     }
+
+    #region PLC状态改变的事件参数定义
+    public enum PlcStatus
+    {
+        Connected,
+        Unconnected,
+    }
+    public class PlcStatusArgs : EventArgs
+    {
+        private PlcStatus plcStatus;
+
+        public PlcStatus Status
+        {
+            get { return plcStatus; }
+            set { plcStatus = value; }
+        }
+
+        public PlcStatusArgs(PlcStatus status)
+        {
+            this.plcStatus = status;
+        }
+    }
+    #endregion
 }

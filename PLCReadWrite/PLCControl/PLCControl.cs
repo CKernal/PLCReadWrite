@@ -25,11 +25,17 @@ namespace PLCReadWrite.PLCControl
             m_plc = plc;
         }
 
+        /// <summary>
+        /// 获取IP地址
+        /// </summary>
         public string IpAddress
         {
             get { return m_plc.IpAddress; }
         }
 
+        /// <summary>
+        /// 获取端口号
+        /// </summary>
         public int Port
         {
             get { return m_plc.Port; }
@@ -56,6 +62,10 @@ namespace PLCReadWrite.PLCControl
             }
         }
 
+        /// <summary>
+        /// 尝试建立连接
+        /// </summary>
+        /// <returns></returns>
         public bool Open()
         {
             try
@@ -78,6 +88,9 @@ namespace PLCReadWrite.PLCControl
             }
         }
 
+        /// <summary>
+        /// 关闭连接
+        /// </summary>
         public void Close()
         {
             if (IsConnected)
@@ -188,11 +201,9 @@ namespace PLCReadWrite.PLCControl
                         case DataType.Double64Address:
                             d.Data = (T)Convert.ChangeType(BitConverter.ToDouble(read.Content, index * 2), tType);
                             break;
-                        //case DataType.StringAddress:
-                        //    //PLC中一个字地址为2个字节（2Byte），可储存两个ASCII字符，一个中文字符。需要解码的字节数为：（PLC字地址长度*2）
-                        //    //此处只支持ASCII字符，若想支持中文读取，可使用支持中文的编码如Unicode，PLC端也相应使用Unicode方式写入
-                        //    d.Data = Encoding.ASCII.GetString(read.Content, index * 2, d.Length * 2);
-                        //    break;
+                        default:
+                            d.Data = default(T);
+                            break;
                     }
                 }
             }
@@ -246,6 +257,7 @@ namespace PLCReadWrite.PLCControl
         }
     }
 
+    #region PLC状态改变的事件参数定义
     public enum PlcStatus
     {
         Connected,
@@ -266,4 +278,5 @@ namespace PLCReadWrite.PLCControl
             this.plcStatus = status;
         }
     }
+    #endregion
 }

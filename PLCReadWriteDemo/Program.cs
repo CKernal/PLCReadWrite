@@ -24,12 +24,11 @@ namespace PLCReadWriteDemo
             //{
             //    Console.WriteLine(item.ToString());
             //}
-            var query = collection.Where(p => p.FullAddress == "D102").ToList();
 
             Console.WriteLine("*************************************");
 
             IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
-            PLCControl plcControl = new PLCControl(plc);
+            PLCReadWrite.PLCControl.PLCControl plcControl = new PLCReadWrite.PLCControl.PLCControl(plc);
 
 
             sw.Restart();

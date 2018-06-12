@@ -8,8 +8,11 @@ namespace PLCReadWrite.PLCControl
 {
     public class PLCData<T> where T : struct
     {
+        private const int TIMEOUT_TICKS = 50000000;
+
         private T m_data = default(T);
         private T m_oldData = default(T);
+        private DateTime m_lastUpdate;
 
         public string Name { get; set; }
         public string SecondName { get; set; }
@@ -31,7 +34,7 @@ namespace PLCReadWrite.PLCControl
             {
                 m_oldData = m_data;
                 m_data = value;
-                LastUpdate = DateTime.Now;
+                m_lastUpdate = DateTime.Now;
             }
         }
         public T OldData
@@ -40,10 +43,14 @@ namespace PLCReadWrite.PLCControl
             set { m_oldData = value; }
         }
 
-        public DateTime LastUpdate { get; set; }
+        public bool IsChanged
+        {
+            get { return !Data.Equals(OldData); }
+        }
+
         public bool Timeout
         {
-            get { return (DateTime.Now.Ticks - LastUpdate.Ticks) > 5000 * 10000; }
+            get { return (DateTime.Now.Ticks - m_lastUpdate.Ticks) > TIMEOUT_TICKS; }
         }
 
         public string FullAddress

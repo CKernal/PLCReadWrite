@@ -279,7 +279,6 @@ namespace PLCReadWrite.PLCControl
             return ret;
         }
 
-
         /// <summary>
         /// 从PLC数据集中移除一个地址
         /// </summary>
@@ -314,7 +313,6 @@ namespace PLCReadWrite.PLCControl
             StartAddr = startAddr;
             DataLength = (endAddr + endUnitLength) - startAddr;
         }
-
 
         public void ForEach(Action<PLCData<T>> action)
         {
