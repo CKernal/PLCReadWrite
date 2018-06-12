@@ -16,14 +16,14 @@ namespace PLCReadWriteDemo
         {
             var collection = new PLCDataCollection<bool>("温度数据集合");
             sw.Restart();
-            collection.Add("温度数据", "D100",800);
+            collection.Add("温度数据", "D100.3",10);
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
-            //foreach (var item in collection)
-            //{
-            //    Console.WriteLine(item.ToString());
-            //}
+            foreach (var item in collection)
+            {
+                Console.WriteLine(item.ToString());
+            }
 
             Console.WriteLine("*************************************");
 
@@ -41,10 +41,10 @@ namespace PLCReadWriteDemo
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
-            //foreach (var item in collection)
-            //{
-            //    Console.WriteLine(item.ToString());
-            //}
+            foreach (var item in collection)
+            {
+                Console.WriteLine(item.ToString());
+            }
 
             Console.WriteLine("*************************************");
             Console.ReadKey();

@@ -39,6 +39,11 @@ namespace PLCReadWrite.PLCControl
     /// </summary>
     public class PLCDataCollection<T> : IEnumerable<PLCData<T>> where T : struct
     {
+        /// <summary>
+        /// 集合内部储存结构
+        /// </summary>
+        private List<PLCData<T>> m_plcDataList = new List<PLCData<T>>();
+
         public string Name { get; private set; }
         public string Prefix { get; private set; }
         public int StartAddr { get; private set; }
@@ -50,21 +55,11 @@ namespace PLCReadWrite.PLCControl
         {
             get { return string.Format("{0}{1}", Prefix, StartAddr); }
         }
-
-        /// <summary>
-        /// 集合内部储存结构
-        /// </summary>
-        private List<PLCData<T>> m_plcDataList = new List<PLCData<T>>();
-
         public PLCData<T> this[int index]
         {
             get { return m_plcDataList[index]; }
             set { m_plcDataList[index] = value; }
         }
-
-        /// <summary>
-        /// 获取集合中数据个数
-        /// </summary>
         public int Count
         {
             get { return m_plcDataList.Count; }
@@ -176,7 +171,7 @@ namespace PLCReadWrite.PLCControl
         /// <param name="name"></param>
         /// <param name="addr"></param>
         /// <returns></returns>
-        private bool AddBit(string name, string addr, string secondName = null)
+        private bool AddBit(string name, string addr, string petName = null)
         {
             if (DataType != DataType.BoolAddress)
             {
@@ -187,7 +182,7 @@ namespace PLCReadWrite.PLCControl
 
             PLCData<T> plcData = new PLCData<T>();
             plcData.Name = name;
-            plcData.SecondName = secondName;
+            plcData.PetName = petName;
             plcData.Prefix = addr[0].ToString();
             plcData.Addr = int.Parse(splits[0]);
             plcData.Bit = byte.Parse(splits[1]);
@@ -221,9 +216,9 @@ namespace PLCReadWrite.PLCControl
             {
                 int curAddr = baseAddr + i;
 
-                string newSecondName = i.ToString();
+                string newPetName = i.ToString();
                 string newAddr = string.Format("{0}{1}.{2}", addr[0], curAddr, basebit);
-                ret &= AddBit(name, newAddr, newSecondName);
+                ret &= AddBit(name, newAddr, newPetName);
             }
 
             return ret;
@@ -234,15 +229,15 @@ namespace PLCReadWrite.PLCControl
         /// <param name="name"></param>
         /// <param name="addr"></param>
         /// <returns></returns>
-        public bool Add(string name, string addr, string secondName = null)
+        public bool Add(string name, string addr, string petName = null)
         {
             if (addr.Contains('.'))
             {
-                return AddBit(name, addr, secondName);
+                return AddBit(name, addr, petName);
             }
             PLCData<T> plcData = new PLCData<T>();
             plcData.Name = name;
-            plcData.SecondName = secondName;
+            plcData.PetName = petName;
             plcData.Prefix = addr[0].ToString();
             plcData.Addr = int.Parse(addr.Substring(1));
 
@@ -271,9 +266,9 @@ namespace PLCReadWrite.PLCControl
             {
                 int curAddr = baseAddr + (i * UnitLength);
 
-                string secondName = i.ToString();
+                string petName = i.ToString();
                 string newAddr = string.Format("{0}{1}", addr[0], curAddr);
-                ret &= Add(name, newAddr, secondName);
+                ret &= Add(name, newAddr, petName);
             }
 
             return ret;

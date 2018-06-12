@@ -15,7 +15,7 @@ namespace PLCReadWrite.PLCControl
         private DateTime m_lastUpdate;
 
         public string Name { get; set; }
-        public string SecondName { get; set; }
+        public string PetName { get; set; }
         public string Prefix { get; set; }
         public int Addr { get; set; }
         public byte Bit { get; set; }
