@@ -51,6 +51,7 @@ namespace PLCReadWrite.PLCControl
         public bool IsBitCollection { get; private set; }
         public DataType DataType { get; private set; }
         public byte UnitLength { get; private set; }
+
         public string FullStartAddress
         {
             get { return string.Format("{0}{1}", Prefix, StartAddr); }
@@ -165,11 +166,13 @@ namespace PLCReadWrite.PLCControl
             }
             return false;
         }
+
         /// <summary>
         /// 向PLC数据集中添加一个Bit地址
         /// </summary>
         /// <param name="name"></param>
         /// <param name="addr"></param>
+        /// <param name="petName"></param>
         /// <returns></returns>
         private bool AddBit(string name, string addr, string petName = null)
         {
@@ -223,11 +226,13 @@ namespace PLCReadWrite.PLCControl
 
             return ret;
         }
+
         /// <summary>
         /// 向PLC数据集中添加一个地址
         /// </summary>
         /// <param name="name"></param>
         /// <param name="addr"></param>
+        /// <param name="petName"></param>
         /// <returns></returns>
         public bool Add(string name, string addr, string petName = null)
         {
@@ -277,7 +282,7 @@ namespace PLCReadWrite.PLCControl
         /// <summary>
         /// 从PLC数据集中移除一个地址
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="plcData"></param>
         public void Remove(PLCData<T> plcData)
         {
             m_plcDataList.Remove(plcData);
