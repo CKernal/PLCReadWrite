@@ -114,16 +114,17 @@ namespace PLCReadWrite.PLCControl.String
 
             string[] splits = addr.Substring(1).Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
 
-            PLCData plcData = new PLCData();
-            plcData.Name = name;
-            plcData.SecondName = secondName;
-            plcData.Prefix = addr[0].ToString();
-            plcData.Addr = int.Parse(splits[0]);
-            plcData.Bit = byte.Parse(splits[1]);
-            plcData.DataType = DataType.BoolAddress;
-            plcData.Length = 1;
-            plcData.IsBit = true;
-
+            PLCData plcData = new PLCData()
+            {
+                Name = name,
+                SecondName = secondName,
+                Prefix = addr[0].ToString(),
+                Addr = int.Parse(splits[0]),
+                Bit = byte.Parse(splits[1]),
+                DataType = DataType.BoolAddress,
+                Length = 1,
+                IsBit = true
+            };
             return this.Add(plcData);
         }
         /// <summary>
@@ -168,14 +169,15 @@ namespace PLCReadWrite.PLCControl.String
         /// <returns></returns>
         public bool Add(string name, string addr, DataType dataType = DataType.Int16Address, int length = 1, string secondName = null)
         {
-            PLCData plcData = new PLCData();
-            plcData.Name = name;
-            plcData.SecondName = secondName;
-            plcData.Prefix = addr[0].ToString();
-            plcData.Addr = int.Parse(addr.Substring(1));
-            plcData.DataType = dataType;
-            plcData.Length = length;
-
+            PLCData plcData = new PLCData()
+            {
+                Name = name,
+                SecondName = secondName,
+                Prefix = addr[0].ToString(),
+                Addr = int.Parse(addr.Substring(1)),
+                DataType = dataType,
+                Length = length
+            };
             return this.Add(plcData);
         }
 

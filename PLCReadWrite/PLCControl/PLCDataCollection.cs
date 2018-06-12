@@ -183,16 +183,17 @@ namespace PLCReadWrite.PLCControl
 
             string[] splits = addr.Substring(1).Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
 
-            PLCData<T> plcData = new PLCData<T>();
-            plcData.Name = name;
-            plcData.PetName = petName;
-            plcData.Prefix = addr[0].ToString();
-            plcData.Addr = int.Parse(splits[0]);
-            plcData.Bit = byte.Parse(splits[1]);
-            plcData.Length = UnitLength;
-            plcData.IsBit = true;
-
-            return this.Add(plcData);
+            PLCData<T> plcData = new PLCData<T>()
+            {
+                Name = name,
+                PetName = petName,
+                Prefix = addr[0].ToString(),
+                Addr = int.Parse(splits[0]),
+                Bit = byte.Parse(splits[1]),
+                Length = UnitLength,
+                IsBit = true
+            };
+            return Add(plcData);
         }
         /// <summary>
         /// 向PLC数据集中添加多个Bit地址，在原基础地址上自动添加count个Bit地址
@@ -240,12 +241,13 @@ namespace PLCReadWrite.PLCControl
             {
                 return AddBit(name, addr, petName);
             }
-            PLCData<T> plcData = new PLCData<T>();
-            plcData.Name = name;
-            plcData.PetName = petName;
-            plcData.Prefix = addr[0].ToString();
-            plcData.Addr = int.Parse(addr.Substring(1));
-
+            PLCData<T> plcData = new PLCData<T>()
+            {
+                Name = name,
+                PetName = petName,
+                Prefix = addr[0].ToString(),
+                Addr = int.Parse(addr.Substring(1))
+            };
             return Add(plcData);
         }
 
