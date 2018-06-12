@@ -49,7 +49,7 @@ namespace PLCReadWrite.PLCControl
             {
                 return m_isConnected;
             }
-            set
+            private set
             {
                 if (value != m_isConnected)
                 {
