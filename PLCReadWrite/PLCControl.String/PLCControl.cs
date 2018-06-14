@@ -271,11 +271,11 @@ namespace PLCReadWrite.PLCControl.String
         }
 
         /// <summary>
-        /// 添加或更新内部数据集合
+        /// 设置内部数据集合
         /// </summary>
         /// <param name="key"></param>
         /// <param name="collection"></param>
-        public void AddOrUpdateCollection(int key, PLCDataCollection collection)
+        public void SetCollection(int key, PLCDataCollection collection)
         {
             m_plcDataCollectionDictionary.AddOrUpdate(key, collection, (oldkey, oldvalue) => collection);
         }
