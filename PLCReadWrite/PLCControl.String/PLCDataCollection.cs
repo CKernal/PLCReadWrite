@@ -26,11 +26,14 @@ namespace PLCReadWrite.PLCControl.String
         /// 集合内部储存结构
         /// </summary>
         private List<PLCData> m_plcDataList = new List<PLCData>();
-
         public PLCData this[int index]
         {
             get { return m_plcDataList[index]; }
             set { m_plcDataList[index] = value; }
+        }
+        public int Count
+        {
+            get { return m_plcDataList.Count; }
         }
 
         public PLCDataCollection(string name)
