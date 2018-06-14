@@ -105,9 +105,9 @@ namespace PLCReadWrite.PLCControl.String
         /// <param name="name"></param>
         /// <param name="addr"></param>
         /// <returns></returns>
-        public bool AddBit(string name, string addr, string secondName = null)
+        public bool AddBit(string name, string addr, string petName = null)
         {
-            if (addr.IndexOf('.') < 0)
+            if (!addr.Contains('.'))
             {
                 return false;
             }
@@ -117,7 +117,7 @@ namespace PLCReadWrite.PLCControl.String
             PLCData plcData = new PLCData()
             {
                 Name = name,
-                SecondName = secondName,
+                PetName = petName,
                 Prefix = addr[0].ToString(),
                 Addr = int.Parse(splits[0]),
                 Bit = byte.Parse(splits[1]),
@@ -136,7 +136,7 @@ namespace PLCReadWrite.PLCControl.String
         /// <returns></returns>
         public bool AddBit(string name, string addr, int count)
         {
-            if (addr.IndexOf('.') < 0)
+            if (!addr.Contains('.'))
             {
                 return false;
             }
@@ -152,9 +152,9 @@ namespace PLCReadWrite.PLCControl.String
             {
                 int curAddr = baseAddr + i;
 
-                string newSecondName = i.ToString();
+                string newPetName = i.ToString();
                 string newAddr = string.Format("{0}{1}.{2}", addr[0], curAddr, basebit);
-                ret &= AddBit(name, newAddr, newSecondName);
+                ret &= AddBit(name, newAddr, newPetName);
             }
 
             return ret;
@@ -167,12 +167,12 @@ namespace PLCReadWrite.PLCControl.String
         /// <param name="dataType"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public bool Add(string name, string addr, DataType dataType = DataType.Int16Address, int length = 1, string secondName = null)
+        public bool Add(string name, string addr, DataType dataType = DataType.Int16Address, int length = 1, string petName = null)
         {
             PLCData plcData = new PLCData()
             {
                 Name = name,
-                SecondName = secondName,
+                PetName = petName,
                 Prefix = addr[0].ToString(),
                 Addr = int.Parse(addr.Substring(1)),
                 DataType = dataType,
@@ -200,9 +200,9 @@ namespace PLCReadWrite.PLCControl.String
             {
                 int curAddr = baseAddr + (i * length);
 
-                string secondName = i.ToString();
+                string petName = i.ToString();
                 string newAddr = string.Format("{0}{1}", addr[0], curAddr);
-                ret &= Add(name, newAddr, dataType, length, secondName);
+                ret &= Add(name, newAddr, dataType, length, petName);
             }
 
             return ret;

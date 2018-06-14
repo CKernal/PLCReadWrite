@@ -43,12 +43,12 @@ namespace PLCReadWrite.PLCControl.String
     {
         private const int TIMEOUT_TICKS = 50000000;
 
-        private string _data = "";
-        private string _oldData = "";
+        private string m_data = "";
+        private string m_oldData = "";
         private DateTime m_lastUpdate;
 
         public string Name { get; set; }
-        public string SecondName { get; set; }
+        public string PetName { get; set; }
         public string Prefix { get; set; }
         public int Addr { get; set; }
         public byte Bit { get; set; }
@@ -63,19 +63,19 @@ namespace PLCReadWrite.PLCControl.String
 
         public string Data
         {
-            get { return _data; }
+            get { return m_data; }
             set
             {
-                _oldData = _data;
-                _data = value;
+                m_oldData = m_data;
+                m_data = value;
                 m_lastUpdate = DateTime.Now;
             }
         }
 
         public string OldData
         {
-            get { return _oldData; }
-            set { _oldData = value; }
+            get { return m_oldData; }
+            set { m_oldData = value; }
         }
 
         public bool Timeout

@@ -14,9 +14,9 @@ namespace PLCReadWriteDemo
         private static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         static void Main(string[] args)
         {
-            var collection = new PLCDataCollection<bool>("温度数据集合");
+            var collection = new PLCDataCollection<short>("温度数据集合");
             sw.Restart();
-            collection.Add("温度数据", "D100.3",10);
+            collection.Add("Slot1", "D100",10);
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
