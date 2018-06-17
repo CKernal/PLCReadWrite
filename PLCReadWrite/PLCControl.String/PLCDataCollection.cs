@@ -57,42 +57,7 @@ namespace PLCReadWrite.PLCControl.String
                 d.OldData = "";
             }
         }
-        /// <summary>
-        /// 向PLC数据集中添加一个地址，仅供类内部使用
-        /// </summary>
-        /// <param name="plcData"></param>
-        /// <returns></returns>
-        private bool AddItem(PLCData plcData)
-        {
-            if (m_plcDataList.Count == 0)
-            {
-                this.Prefix = plcData.Prefix;
-                this.IsBitCollection = plcData.IsBit;
-            }
 
-            if (this.Prefix == plcData.Prefix
-                && this.IsBitCollection == plcData.IsBit)
-            {
-                var matchCount = m_plcDataList.Where(d =>
-                {
-                    bool bret = false;
-                    bret = d.Prefix == plcData.Prefix && d.Addr == plcData.Addr;
-                    if (IsBitCollection)
-                    {
-                        bret &= d.Bit == plcData.Bit;
-                    }
-                    return bret;
-
-                }).Count();
-
-                if (matchCount <= 0)
-                {
-                    m_plcDataList.Add(plcData);
-                    return true;
-                }
-            }
-            return false;
-        }
         /// <summary>
         /// 向PLC数据集中添加一个Bit地址
         /// </summary>
@@ -260,7 +225,17 @@ namespace PLCReadWrite.PLCControl.String
 
         public void Add(PLCData item)
         {
-            m_plcDataList.Add(item);
+            if (m_plcDataList.Count == 0)
+            {
+                this.Prefix = item.Prefix;
+                this.IsBitCollection = item.IsBit;
+            }
+
+            if (this.Prefix == item.Prefix
+                && this.IsBitCollection == item.IsBit)
+            {
+                m_plcDataList.Add(item);
+            }
         }
 
         public bool Contains(PLCData item)

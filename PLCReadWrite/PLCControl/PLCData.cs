@@ -61,6 +61,11 @@ namespace PLCReadWrite.PLCControl
             }
         }
 
+        public string FullName
+        {
+            get { return string.Format("{0}-{1}", Name, PetName); }
+        }
+
         public override string ToString()
         {
             return string.Format("{0}={1}", FullAddress, Data);

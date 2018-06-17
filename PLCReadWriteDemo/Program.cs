@@ -26,6 +26,7 @@ namespace PLCReadWriteDemo
             var collection = new PLCDataCollection<short>("温度数据集合");
             sw.Restart();
             collection.Add("Slot1", "D100", 800);
+            collection.Update();
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
@@ -58,10 +59,8 @@ namespace PLCReadWriteDemo
         {
             var collection = new PLCDataCollection("温度数据集合");
             sw.Restart();
-            collection.Add("Slot1", "D1000", PLCReadWrite.PLCControl.String.DataType.Int16Address, 1, 200);
-            collection.Add("Slot2", "D2000", PLCReadWrite.PLCControl.String.DataType.Int16Address, 1, 200);
-            collection.Add("Slot3", "D3000", PLCReadWrite.PLCControl.String.DataType.Int16Address, 1, 200);
-            collection.Add("Slot2", "D4000", PLCReadWrite.PLCControl.String.DataType.Int16Address, 1, 200);
+            collection.Add("Slot1", "D1000", PLCReadWrite.PLCControl.String.DataType.Int16Address, 1, 800);
+
             collection.Update();
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
