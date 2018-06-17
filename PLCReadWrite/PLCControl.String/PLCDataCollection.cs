@@ -12,6 +12,11 @@ namespace PLCReadWrite.PLCControl.String
     /// </summary>
     public class PLCDataCollection : ICollection<PLCData>
     {
+        /// <summary>
+        /// 集合内部储存结构
+        /// </summary>
+        private List<PLCData> m_plcDataList = new List<PLCData>();
+
         public string Name { get; private set; }
         public string Prefix { get; private set; }
         public int StartAddr { get; private set; }
@@ -21,24 +26,18 @@ namespace PLCReadWrite.PLCControl.String
         {
             get { return string.Format("{0}{1}", Prefix, StartAddr); }
         }
-
-        /// <summary>
-        /// 集合内部储存结构
-        /// </summary>
-        private List<PLCData> m_plcDataList = new List<PLCData>();
-        public PLCData this[int index]
-        {
-            get { return m_plcDataList[index]; }
-            set { m_plcDataList[index] = value; }
-        }
         public int Count
         {
             get { return m_plcDataList.Count; }
         }
-
         public bool IsReadOnly
         {
             get { return false; }
+        }
+        public PLCData this[int index]
+        {
+            get { return m_plcDataList[index]; }
+            set { m_plcDataList[index] = value; }
         }
 
         public PLCDataCollection(string name)
@@ -57,7 +56,6 @@ namespace PLCReadWrite.PLCControl.String
                 d.OldData = "";
             }
         }
-
         /// <summary>
         /// 向PLC数据集中添加一个Bit地址
         /// </summary>

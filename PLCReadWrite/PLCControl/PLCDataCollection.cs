@@ -49,24 +49,22 @@ namespace PLCReadWrite.PLCControl
         public bool IsBitCollection { get; private set; }
         public DataType DataType { get; private set; }
         public byte UnitLength { get; private set; }
-
         public string FullStartAddress
         {
             get { return string.Format("{0}{1}", Prefix, StartAddr); }
-        }
-        public PLCData<T> this[int index]
-        {
-            get { return m_plcDataList[index]; }
-            set { m_plcDataList[index] = value; }
         }
         public int Count
         {
             get { return m_plcDataList.Count; }
         }
-
         public bool IsReadOnly
         {
             get { return false; }
+        }
+        public PLCData<T> this[int index]
+        {
+            get { return m_plcDataList[index]; }
+            set { m_plcDataList[index] = value; }
         }
 
         public PLCDataCollection(string name)
