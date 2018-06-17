@@ -10,7 +10,7 @@ namespace PLCReadWrite.PLCControl.String
     /// <summary>
     /// PLC数据集合（仅支持同一种地址前缀）
     /// </summary>
-    public class PLCDataCollection : IEnumerable<PLCData>
+    public class PLCDataCollection : ICollection<PLCData>
     {
         public string Name { get; private set; }
         public string Prefix { get; private set; }
@@ -36,19 +36,16 @@ namespace PLCReadWrite.PLCControl.String
             get { return m_plcDataList.Count; }
         }
 
+        public bool IsReadOnly
+        {
+            get { return false; }
+        }
+
         public PLCDataCollection(string name)
         {
             Name = name;
         }
 
-        /// <summary>
-        /// 清空数据集合
-        /// </summary>
-        public void Clear()
-        {
-            m_plcDataList.Clear();
-            Update();
-        }
         /// <summary>
         /// 清空数据集数据
         /// </summary>
@@ -59,14 +56,13 @@ namespace PLCReadWrite.PLCControl.String
                 d.Data = "";
                 d.OldData = "";
             }
-            Update();
         }
         /// <summary>
         /// 向PLC数据集中添加一个地址，仅供类内部使用
         /// </summary>
         /// <param name="plcData"></param>
         /// <returns></returns>
-        private bool Add(PLCData plcData)
+        private bool AddItem(PLCData plcData)
         {
             if (m_plcDataList.Count == 0)
             {
@@ -77,26 +73,21 @@ namespace PLCReadWrite.PLCControl.String
             if (this.Prefix == plcData.Prefix
                 && this.IsBitCollection == plcData.IsBit)
             {
-                int matchIndex = -1;
-
-                if (IsBitCollection)
+                var matchCount = m_plcDataList.Where(d =>
                 {
-                    matchIndex = m_plcDataList.FindIndex(d =>
-                        d.Prefix == plcData.Prefix
-                        && d.Addr == plcData.Addr
-                        && d.Bit == plcData.Bit);
-                }
-                else
-                {
-                    matchIndex = m_plcDataList.FindIndex(d =>
-                        d.Prefix == plcData.Prefix
-                        && d.Addr == plcData.Addr);
-                }
+                    bool bret = false;
+                    bret = d.Prefix == plcData.Prefix && d.Addr == plcData.Addr;
+                    if (IsBitCollection)
+                    {
+                        bret &= d.Bit == plcData.Bit;
+                    }
+                    return bret;
 
-                if (matchIndex < 0)
+                }).Count();
+
+                if (matchCount <= 0)
                 {
                     m_plcDataList.Add(plcData);
-                    Update();
                     return true;
                 }
             }
@@ -108,11 +99,11 @@ namespace PLCReadWrite.PLCControl.String
         /// <param name="name"></param>
         /// <param name="addr"></param>
         /// <returns></returns>
-        public bool AddBit(string name, string addr, string petName = null)
+        public void AddBit(string name, string addr, string petName = null)
         {
             if (!addr.Contains('.'))
             {
-                return false;
+                return;
             }
 
             string[] splits = addr.Substring(1).Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
@@ -128,7 +119,7 @@ namespace PLCReadWrite.PLCControl.String
                 Length = 1,
                 IsBit = true
             };
-            return this.Add(plcData);
+            Add(plcData);
         }
         /// <summary>
         /// 向PLC数据集中添加多个Bit地址，在原基础地址上自动添加count个Bit地址
@@ -137,14 +128,13 @@ namespace PLCReadWrite.PLCControl.String
         /// <param name="addr"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public bool AddBit(string name, string addr, int count)
+        public void AddBit(string name, string addr, int count)
         {
             if (!addr.Contains('.'))
             {
-                return false;
+                return;
             }
 
-            bool ret = false;
             int baseAddr = 0;
             byte basebit = 0;
             string[] splits = addr.Substring(1).Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
@@ -157,10 +147,8 @@ namespace PLCReadWrite.PLCControl.String
 
                 string newPetName = i.ToString();
                 string newAddr = string.Format("{0}{1}.{2}", addr[0], curAddr, basebit);
-                ret &= AddBit(name, newAddr, newPetName);
+                AddBit(name, newAddr, newPetName);
             }
-
-            return ret;
         }
         /// <summary>
         /// 向PLC数据集中添加一个地址
@@ -170,7 +158,7 @@ namespace PLCReadWrite.PLCControl.String
         /// <param name="dataType"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public bool Add(string name, string addr, DataType dataType = DataType.Int16Address, int length = 1, string petName = null)
+        public void Add(string name, string addr, DataType dataType = DataType.Int16Address, int length = 1, string petName = null)
         {
             PLCData plcData = new PLCData()
             {
@@ -181,7 +169,7 @@ namespace PLCReadWrite.PLCControl.String
                 DataType = dataType,
                 Length = length
             };
-            return this.Add(plcData);
+            Add(plcData);
         }
 
         /// <summary>
@@ -193,9 +181,8 @@ namespace PLCReadWrite.PLCControl.String
         /// <param name="length"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public bool Add(string name, string addr, DataType dataType, int length, int count)
+        public void Add(string name, string addr, DataType dataType, int length, int count)
         {
-            bool ret = false;
             int baseAddr = 0;
             baseAddr = int.Parse(addr.Substring(1));
 
@@ -205,21 +192,14 @@ namespace PLCReadWrite.PLCControl.String
 
                 string petName = i.ToString();
                 string newAddr = string.Format("{0}{1}", addr[0], curAddr);
-                ret &= Add(name, newAddr, dataType, length, petName);
+                Add(name, newAddr, dataType, length, petName);
             }
-
-            return ret;
         }
 
-        public void Remove(string name)
-        {
-            m_plcDataList.RemoveAll(d => d.Name == name);
-            Update();
-        }
         /// <summary>
-        /// 更新数据集，仅供类内部使用
+        /// 更新数据集，添加或移除集合项后调用
         /// </summary>
-        private void Update()
+        public void Update()
         {
             int startAddr = int.MaxValue;
             int endAddr = 0;
@@ -271,6 +251,31 @@ namespace PLCReadWrite.PLCControl.String
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public void Clear()
+        {
+            m_plcDataList.Clear();
+        }
+
+        public void Add(PLCData item)
+        {
+            m_plcDataList.Add(item);
+        }
+
+        public bool Contains(PLCData item)
+        {
+            return m_plcDataList.Contains(item);
+        }
+
+        public void CopyTo(PLCData[] array, int arrayIndex)
+        {
+            m_plcDataList.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(PLCData item)
+        {
+            return m_plcDataList.Remove(item);
         }
     }
 
