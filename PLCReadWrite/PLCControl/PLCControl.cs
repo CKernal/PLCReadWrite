@@ -181,22 +181,28 @@ namespace PLCReadWrite.PLCControl
                     switch (dType)
                     {
                         case DataType.BoolAddress:
-                            d.Data = (T)Convert.ChangeType(BitConverter.ToBoolean(read.Content, index), tType);
+                            //d.Data = (T)Convert.ChangeType(BitConverter.ToBoolean(read.Content, index), tType);
+                            d.Data = (T)(ValueType)BitConverter.ToBoolean(read.Content, index);
                             break;
                         case DataType.Int16Address:
-                            d.Data = (T)Convert.ChangeType(BitConverter.ToInt16(read.Content, index * 2), tType);
+                            //d.Data = (T)Convert.ChangeType(BitConverter.ToInt16(read.Content, index * 2), tType);
+                            d.Data = (T)(ValueType)BitConverter.ToInt16(read.Content, index * 2);
                             break;
                         case DataType.Int32Address:
-                            d.Data = (T)Convert.ChangeType(BitConverter.ToInt32(read.Content, index * 2), tType);
+                            //d.Data = (T)Convert.ChangeType(BitConverter.ToInt32(read.Content, index * 2), tType);
+                            d.Data = (T)(ValueType)BitConverter.ToInt32(read.Content, index * 2);
                             break;
                         case DataType.Int64Address:
-                            d.Data = (T)Convert.ChangeType(BitConverter.ToInt64(read.Content, index * 2), tType);
+                            //d.Data = (T)Convert.ChangeType(BitConverter.ToInt64(read.Content, index * 2), tType);
+                            d.Data = (T)(ValueType)BitConverter.ToInt64(read.Content, index * 2);
                             break;
                         case DataType.Float32Address:
-                            d.Data = (T)Convert.ChangeType(BitConverter.ToSingle(read.Content, index * 2), tType);
+                            //d.Data = (T)Convert.ChangeType(BitConverter.ToSingle(read.Content, index * 2), tType);
+                            d.Data = (T)(ValueType)BitConverter.ToSingle(read.Content, index * 2);
                             break;
                         case DataType.Double64Address:
-                            d.Data = (T)Convert.ChangeType(BitConverter.ToDouble(read.Content, index * 2), tType);
+                            //d.Data = (T)Convert.ChangeType(BitConverter.ToDouble(read.Content, index * 2), tType);
+                            d.Data = (T)(ValueType)BitConverter.ToDouble(read.Content, index * 2);
                             break;
                         default:
                             d.Data = default(T);

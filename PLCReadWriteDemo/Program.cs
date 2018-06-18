@@ -40,7 +40,7 @@ namespace PLCReadWriteDemo
             IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
             PLCReadWrite.PLCControl.PLCControl plcControl = new PLCReadWrite.PLCControl.PLCControl(plc);
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
                 sw.Restart();
                 plcControl.ReadCollection(ref collection);
@@ -64,11 +64,6 @@ namespace PLCReadWriteDemo
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
-            sw.Restart();
-            var query = collection.Where(d => d.NameIndex == 800).ToList();
-            sw.Stop();
-            Console.WriteLine("query Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
-
             //foreach (var item in collection)
             //{
             //    Console.WriteLine(item.ToString());
@@ -79,7 +74,7 @@ namespace PLCReadWriteDemo
             IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
             PLCReadWrite.PLCControl.String.PLCControl plcControl = new PLCReadWrite.PLCControl.String.PLCControl(plc);
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
                 sw.Restart();
                 plcControl.ReadCollection(ref collection);
