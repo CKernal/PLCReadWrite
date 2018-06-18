@@ -99,9 +99,7 @@ namespace PLCReadWrite.PLCControl
                     UnitLength = 4;
                     break;
                 default:
-                    DataType = DataType.Int16Address;
-                    UnitLength = 1;
-                    break;
+                    throw new Exception("The DataType is not support!");
             }
 
         }
@@ -125,9 +123,9 @@ namespace PLCReadWrite.PLCControl
         /// </summary>
         /// <param name="name"></param>
         /// <param name="addr"></param>
-        /// <param name="petName"></param>
+        /// <param name="index"></param>
         /// <returns></returns>
-        private void AddBit(string name, string addr, string petName = null)
+        private void AddBit(string name, string addr, uint index = 0)
         {
             if (DataType != DataType.BoolAddress)
             {
@@ -139,7 +137,7 @@ namespace PLCReadWrite.PLCControl
             PLCData<T> plcData = new PLCData<T>()
             {
                 Name = name,
-                PetName = petName,
+                NameIndex = index,
                 Prefix = addr[0].ToString(),
                 Addr = int.Parse(splits[0]),
                 Bit = byte.Parse(splits[1]),
@@ -157,7 +155,7 @@ namespace PLCReadWrite.PLCControl
         /// <returns></returns>
         private void AddBit(string name, string addr, int count)
         {
-            if (DataType != DataType.BoolAddress)
+            if (DataType != DataType.BoolAddress || count < 0)
             {
                 return;
             }
@@ -171,10 +169,8 @@ namespace PLCReadWrite.PLCControl
             for (int i = 0; i < count; i++)
             {
                 int curAddr = baseAddr + i;
-
-                string newPetName = i.ToString();
                 string newAddr = string.Format("{0}{1}.{2}", addr[0], curAddr, basebit);
-                AddBit(name, newAddr, newPetName);
+                AddBit(name, newAddr, (uint)i);
             }
         }
         /// <summary>
@@ -182,19 +178,19 @@ namespace PLCReadWrite.PLCControl
         /// </summary>
         /// <param name="name"></param>
         /// <param name="addr"></param>
-        /// <param name="petName"></param>
+        /// <param name="index"></param>
         /// <returns></returns>
-        public void Add(string name, string addr, string petName = null)
+        public void Add(string name, string addr, uint index = 0)
         {
             if (addr.Contains('.'))
             {
-                AddBit(name, addr, petName);
+                AddBit(name, addr, index);
                 return; 
             }
             PLCData<T> plcData = new PLCData<T>()
             {
                 Name = name,
-                PetName = petName,
+                NameIndex = index,
                 Prefix = addr[0].ToString(),
                 Addr = int.Parse(addr.Substring(1))
             };
@@ -215,6 +211,11 @@ namespace PLCReadWrite.PLCControl
                 return;
             }
 
+            if (count < 0)
+            {
+                return;
+            }
+
             int baseAddr = 0;
             baseAddr = int.Parse(addr.Substring(1));
 
@@ -222,9 +223,8 @@ namespace PLCReadWrite.PLCControl
             {
                 int curAddr = baseAddr + (i * UnitLength);
 
-                string petName = i.ToString();
                 string newAddr = string.Format("{0}{1}", addr[0], curAddr);
-                Add(name, newAddr, petName);
+                Add(name, newAddr, (uint)i);
             }
         }
 

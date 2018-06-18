@@ -11,7 +11,7 @@ namespace PLCReadWrite.PLCControl
         private DateTime m_lastUpdate;
 
         public string Name { get; set; }
-        public string PetName { get; set; }
+        public uint NameIndex { get; set; }
         public string Prefix { get; set; }
         public int Addr { get; set; }
         public byte Bit { get; set; }
@@ -63,7 +63,7 @@ namespace PLCReadWrite.PLCControl
 
         public string FullName
         {
-            get { return string.Format("{0}-{1}", Name, PetName); }
+            get { return string.Format("{0}-{1}", Name, NameIndex); }
         }
 
         public override string ToString()

@@ -59,11 +59,15 @@ namespace PLCReadWriteDemo
         {
             var collection = new PLCDataCollection("温度数据集合");
             sw.Restart();
-            collection.Add("Slot1", "D1000", PLCReadWrite.PLCControl.String.DataType.Int16Address, 1, 800);
-
+            collection.Add("Slot1", "D1000", PLCReadWrite.PLCControl.String.DataType.Int16Address, 800);
             collection.Update();
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+
+            sw.Restart();
+            var query = collection.Where(d => d.NameIndex == 800).ToList();
+            sw.Stop();
+            Console.WriteLine("query Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
             //foreach (var item in collection)
             //{

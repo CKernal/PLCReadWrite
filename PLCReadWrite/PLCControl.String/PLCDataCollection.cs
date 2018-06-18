@@ -62,7 +62,7 @@ namespace PLCReadWrite.PLCControl.String
         /// <param name="name"></param>
         /// <param name="addr"></param>
         /// <returns></returns>
-        public void AddBit(string name, string addr, string petName = null)
+        public void AddBit(string name, string addr, uint index = 0)
         {
             if (!addr.Contains('.'))
             {
@@ -74,7 +74,7 @@ namespace PLCReadWrite.PLCControl.String
             PLCData plcData = new PLCData()
             {
                 Name = name,
-                PetName = petName,
+                NameIndex = index,
                 Prefix = addr[0].ToString(),
                 Addr = int.Parse(splits[0]),
                 Bit = byte.Parse(splits[1]),
@@ -93,7 +93,7 @@ namespace PLCReadWrite.PLCControl.String
         /// <returns></returns>
         public void AddBit(string name, string addr, int count)
         {
-            if (!addr.Contains('.'))
+            if (!addr.Contains('.') || count < 0)
             {
                 return;
             }
@@ -107,10 +107,8 @@ namespace PLCReadWrite.PLCControl.String
             for (int i = 0; i < count; i++)
             {
                 int curAddr = baseAddr + i;
-
-                string newPetName = i.ToString();
                 string newAddr = string.Format("{0}{1}.{2}", addr[0], curAddr, basebit);
-                AddBit(name, newAddr, newPetName);
+                AddBit(name, newAddr, (uint)i);
             }
         }
         /// <summary>
@@ -119,18 +117,23 @@ namespace PLCReadWrite.PLCControl.String
         /// <param name="name"></param>
         /// <param name="addr"></param>
         /// <param name="dataType"></param>
-        /// <param name="length"></param>
+        /// <param name="index"></param>
         /// <returns></returns>
-        public void Add(string name, string addr, DataType dataType = DataType.Int16Address, int length = 1, string petName = null)
+        public void Add(string name, string addr, DataType dataType = DataType.Int16Address, uint index = 0)
         {
+            if (dataType == DataType.StringAddress)
+            {
+                return;
+            }
+
             PLCData plcData = new PLCData()
             {
                 Name = name,
-                PetName = petName,
+                NameIndex = index,
                 Prefix = addr[0].ToString(),
                 Addr = int.Parse(addr.Substring(1)),
                 DataType = dataType,
-                Length = length
+                Length = GetAddressLength(dataType),
             };
             Add(plcData);
         }
@@ -141,22 +144,46 @@ namespace PLCReadWrite.PLCControl.String
         /// <param name="name"></param>
         /// <param name="addr"></param>
         /// <param name="dataType"></param>
-        /// <param name="length"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        public void Add(string name, string addr, DataType dataType, int length, int count)
+        public void Add(string name, string addr, DataType dataType, int count)
         {
+            if (count < 0 || dataType == DataType.StringAddress)
+            {
+                return;
+            }
+
             int baseAddr = 0;
             baseAddr = int.Parse(addr.Substring(1));
 
             for (int i = 0; i < count; i++)
             {
+                int length = GetAddressLength(dataType);
                 int curAddr = baseAddr + (i * length);
-
-                string petName = i.ToString();
                 string newAddr = string.Format("{0}{1}", addr[0], curAddr);
-                Add(name, newAddr, dataType, length, petName);
+                Add(name, newAddr, dataType, (uint)i);
             }
+        }
+
+        /// <summary>
+        /// 向PLC数据集中添加一个字符串地址
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="addr"></param>
+        /// <param name="length"></param>
+        /// <param name="index"></param>
+        public void AddString(string name, string addr, int length, uint index = 0)
+        {
+            PLCData plcData = new PLCData()
+            {
+                Name = name,
+                NameIndex = index,
+                Prefix = addr[0].ToString(),
+                Addr = int.Parse(addr.Substring(1)),
+                DataType = DataType.StringAddress,
+                Length = length,
+            };
+            Add(plcData);
         }
 
         /// <summary>
@@ -170,29 +197,10 @@ namespace PLCReadWrite.PLCControl.String
 
             foreach (var d in m_plcDataList)
             {
-                switch (d.DataType)
+                byte length = GetAddressLength(d.DataType);
+                if (length != 0)
                 {
-                    case DataType.BoolAddress:
-                        d.Length = 1;
-                        break;
-                    case DataType.Int16Address:
-                        d.Length = 1;
-                        break;
-                    case DataType.Int32Address:
-                        d.Length = 2;
-                        break;
-                    case DataType.Int64Address:
-                        d.Length = 4;
-                        break;
-                    case DataType.Float32Address:
-                        d.Length = 2;
-                        break;
-                    case DataType.Double64Address:
-                        d.Length = 4;
-                        break;
-                    case DataType.StringAddress:
-                        //数据类型为字符串时，长度值由外部传入
-                        break;
+                    d.Length = length;
                 }
 
                 if (d.Addr < startAddr) { startAddr = d.Addr; }
@@ -201,6 +209,38 @@ namespace PLCReadWrite.PLCControl.String
 
             this.StartAddr = startAddr;
             this.DataLength = (endAddr + endUnitLength) - startAddr;
+        }
+
+        private byte GetAddressLength(DataType dataType)
+        {
+            byte length = 0;
+            switch (dataType)
+            {
+                case DataType.BoolAddress:
+                    length = 1;
+                    break;
+                case DataType.Int16Address:
+                    length = 1;
+                    break;
+                case DataType.Int32Address:
+                    length = 2;
+                    break;
+                case DataType.Int64Address:
+                    length = 4;
+                    break;
+                case DataType.Float32Address:
+                    length = 2;
+                    break;
+                case DataType.Double64Address:
+                    length = 4;
+                    break;
+                case DataType.StringAddress:
+                    //数据类型为字符串时，长度值由外部传入
+                    break;
+                default:
+                    break;
+            }
+            return length;
         }
 
         public IEnumerator<PLCData> GetEnumerator()
