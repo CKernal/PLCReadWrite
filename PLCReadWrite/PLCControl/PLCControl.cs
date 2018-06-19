@@ -156,7 +156,7 @@ namespace PLCReadWrite.PLCControl
                 foreach (var d in plcDataCollection)
                 {
                     int index = ((d.Addr - sAddr) * 16) + d.Bit;
-                    d.Data = (T)Convert.ChangeType(bitArray[index], tType);
+                    d.Data = (T)(ValueType)bitArray[index];
                 }
             }
             return IsConnected;
