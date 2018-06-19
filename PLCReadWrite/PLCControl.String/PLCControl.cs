@@ -77,13 +77,12 @@ namespace PLCReadWrite.PLCControl.String
                 if (connect.IsSuccess)
                 {
                     IsConnected = true;
-                    return true;
                 }
                 else
                 {
                     IsConnected = false;
-                    return false;
                 }
+                return IsConnected;
             }
             catch (Exception ex)
             {
@@ -271,11 +270,11 @@ namespace PLCReadWrite.PLCControl.String
         }
 
         /// <summary>
-        /// 设置内部数据集合
+        /// 添加或更新内部数据集合
         /// </summary>
         /// <param name="key"></param>
         /// <param name="collection"></param>
-        public void SetCollection(int key, PLCDataCollection collection)
+        public void AddCollection(int key, PLCDataCollection collection)
         {
             m_plcDataCollectionDictionary.AddOrUpdate(key, collection, (oldkey, oldvalue) => collection);
         }
