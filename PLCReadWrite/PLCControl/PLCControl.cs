@@ -145,11 +145,26 @@ namespace PLCReadWrite.PLCControl
         {
             string startAddr = plcDataCollection.FullStartAddress;
             ushort uSize = (ushort)plcDataCollection.DataLength;
+
             OperateResult<byte[]> read = m_plc.Read(startAddr, uSize);
             IsConnected = read.IsSuccess;
             if (IsConnected)
             {
-                System.Collections.BitArray bitArray = new System.Collections.BitArray(read.Content);
+                short[] tempData = new short[uSize];
+                for (int index = 0; index < uSize; index++)
+                {
+                    tempData[index] = m_plc.Transform.TransInt16(read.Content, index * 2);
+                }
+
+                byte[] byteData = new byte[uSize * 2];
+                for (int index = 0; index < uSize; index++)
+                {
+                    byte[] tempByte = BitConverter.GetBytes(tempData[index]);
+                    byteData[index * 2 + 0] = tempByte[0];
+                    byteData[index * 2 + 1] = tempByte[1];
+                }
+
+                System.Collections.BitArray bitArray = new System.Collections.BitArray(byteData);
                 int sAddr = plcDataCollection.StartAddr;
                 Type tType = typeof(T);
 
@@ -181,28 +196,22 @@ namespace PLCReadWrite.PLCControl
                     switch (dType)
                     {
                         case DataType.BoolAddress:
-                            //d.Data = (T)Convert.ChangeType(BitConverter.ToBoolean(read.Content, index), tType);
-                            d.Data = (T)(ValueType)BitConverter.ToBoolean(read.Content, index);
+                            d.Data = (T)(ValueType)m_plc.Transform.TransBool(read.Content, index);
                             break;
                         case DataType.Int16Address:
-                            //d.Data = (T)Convert.ChangeType(BitConverter.ToInt16(read.Content, index * 2), tType);
-                            d.Data = (T)(ValueType)BitConverter.ToInt16(read.Content, index * 2);
+                            d.Data = (T)(ValueType)m_plc.Transform.TransInt16(read.Content, index * 2);
                             break;
                         case DataType.Int32Address:
-                            //d.Data = (T)Convert.ChangeType(BitConverter.ToInt32(read.Content, index * 2), tType);
-                            d.Data = (T)(ValueType)BitConverter.ToInt32(read.Content, index * 2);
+                            d.Data = (T)(ValueType)m_plc.Transform.TransInt32(read.Content, index * 2);
                             break;
                         case DataType.Int64Address:
-                            //d.Data = (T)Convert.ChangeType(BitConverter.ToInt64(read.Content, index * 2), tType);
-                            d.Data = (T)(ValueType)BitConverter.ToInt64(read.Content, index * 2);
+                            d.Data = (T)(ValueType)m_plc.Transform.TransInt64(read.Content, index * 2);
                             break;
                         case DataType.Float32Address:
-                            //d.Data = (T)Convert.ChangeType(BitConverter.ToSingle(read.Content, index * 2), tType);
-                            d.Data = (T)(ValueType)BitConverter.ToSingle(read.Content, index * 2);
+                            d.Data = (T)(ValueType)m_plc.Transform.TransSingle(read.Content, index * 2);
                             break;
                         case DataType.Double64Address:
-                            //d.Data = (T)Convert.ChangeType(BitConverter.ToDouble(read.Content, index * 2), tType);
-                            d.Data = (T)(ValueType)BitConverter.ToDouble(read.Content, index * 2);
+                            d.Data = (T)(ValueType)m_plc.Transform.TransDouble(read.Content, index * 2);
                             break;
                         default:
                             d.Data = default(T);
