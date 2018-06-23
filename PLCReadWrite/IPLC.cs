@@ -1,4 +1,6 @@
-﻿using HslCommunication;
+﻿using System;
+using HslCommunication;
+using HslCommunication.Core;
 using HslCommunication.Profinet.Melsec;
 using HslCommunication.Profinet.Omron;
 
@@ -15,6 +17,11 @@ namespace PLCReadWrite
         /// 获取或设置端口号
         /// </summary>
         int Port { get; set; }
+
+        /// <summary>
+        /// 获得当前PLC的数据变换机制
+        /// </summary>
+        IByteTransform Transform { get; }
 
         /// <summary>
         /// 切换短连接模式到长连接模式，后面的每次请求都共享一个通道
@@ -67,6 +74,11 @@ namespace PLCReadWrite
         {
             ConnectTimeOut = 100;
         }
+
+        public IByteTransform Transform
+        {
+            get { return base.ByteTransform; }
+        }
     }
 
     public class MelsecPlcMc : MelsecMcNet, IPLC
@@ -74,6 +86,11 @@ namespace PLCReadWrite
         public MelsecPlcMc(string ip, int port) : base(ip, port)
         {
             ConnectTimeOut = 100;
+        }
+
+        public IByteTransform Transform
+        {
+            get { return base.ByteTransform; }
         }
     }
 
@@ -85,6 +102,11 @@ namespace PLCReadWrite
             //SA1 = 0x0C; // PC网络号，（Source node address）
             //DA1 = 0x0B; // PLC网络号，（destination node address）
             //DA2 = 0x00; // PLC单元号，通常为0（Destination unit address）
+        }
+
+        public IByteTransform Transform
+        {
+            get { return base.ByteTransform; }
         }
     }
 }

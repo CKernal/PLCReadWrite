@@ -154,7 +154,21 @@ namespace PLCReadWrite.PLCControl.String
             IsConnected = read.IsSuccess;
             if (IsConnected)
             {
-                System.Collections.BitArray bitArray = new System.Collections.BitArray(read.Content);
+                short[] tempData = new short[uSize];
+                for (int index = 0; index < uSize; index++)
+                {
+                    tempData[index] = m_plc.Transform.TransInt16(read.Content, index * 2);
+                }
+
+                byte[] byteData = new byte[uSize * 2];
+                for (int index = 0; index < uSize; index++)
+                {
+                    byte[] tempByte = BitConverter.GetBytes(tempData[index]);
+                    byteData[index * 2 + 0] = tempByte[0];
+                    byteData[index * 2 + 1] = tempByte[1];
+                }
+
+                System.Collections.BitArray bitArray = new System.Collections.BitArray(byteData);
                 int sAddr = plcDataCollection.StartAddr;
 
                 foreach (var d in plcDataCollection)
@@ -184,27 +198,28 @@ namespace PLCReadWrite.PLCControl.String
                     switch (d.DataType)
                     {
                         case DataType.BoolAddress:
-                            d.Data = BitConverter.ToBoolean(read.Content, index).ToString();
+                            d.Data = m_plc.Transform.TransBool(read.Content, index).ToString();
                             break;
                         case DataType.Int16Address:
-                            d.Data = BitConverter.ToInt16(read.Content, index * 2).ToString();
+                            d.Data = m_plc.Transform.TransInt16(read.Content, index * 2).ToString();
                             break;
                         case DataType.Int32Address:
-                            d.Data = BitConverter.ToInt32(read.Content, index * 2).ToString();
+                            d.Data = m_plc.Transform.TransInt32(read.Content, index * 2).ToString();
                             break;
                         case DataType.Int64Address:
-                            d.Data = BitConverter.ToInt64(read.Content, index * 2).ToString();
+                            d.Data = m_plc.Transform.TransInt64(read.Content, index * 2).ToString();
                             break;
                         case DataType.Float32Address:
-                            d.Data = BitConverter.ToSingle(read.Content, index * 2).ToString();
+                            d.Data = m_plc.Transform.TransSingle(read.Content, index * 2).ToString();
                             break;
                         case DataType.Double64Address:
-                            d.Data = BitConverter.ToDouble(read.Content, index * 2).ToString();
+                            d.Data = m_plc.Transform.TransDouble(read.Content, index * 2).ToString();
                             break;
                         case DataType.StringAddress:
                             //PLC中一个字地址为2个字节（2Byte），可储存两个ASCII字符，一个中文字符。需要解码的字节数为：（PLC字地址长度*2）
                             //此处只支持ASCII字符，若想支持中文读取，可使用支持中文的编码如Unicode，PLC端也相应使用Unicode方式写入
-                            d.Data = Encoding.ASCII.GetString(read.Content, index * 2, d.Length * 2);
+                            //d.Data = Encoding.ASCII.GetString(read.Content, index * 2, d.Length * 2);
+                            d.Data = m_plc.Transform.TransString(read.Content, index * 2, d.Length * 2, Encoding.ASCII).ToString();
                             break;
                     }
                 }
