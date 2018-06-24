@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PLCReadWrite.PLCControl
 {
-    public class PLCControlBase
+    public abstract class PLCControlBase
     {
         protected IPLC m_plc;
         private bool m_isConnected = false;
