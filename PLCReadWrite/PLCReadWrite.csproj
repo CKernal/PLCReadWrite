@@ -44,9 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPLC.cs" />
+    <Compile Include="PLCControl\IPLCControl.cs" />
     <Compile Include="PLCControl.String\PLCControl.cs" />
     <Compile Include="PLCControl.String\PLCData.cs" />
     <Compile Include="PLCControl.String\PLCDataCollection.cs" />
+    <Compile Include="PLCControl\PLCControlBase.cs" />
     <Compile Include="PLCControl\PLCControl.cs" />
     <Compile Include="PLCControl\PLCData.cs" />
     <Compile Include="PLCControl\PLCDataCollection.cs" />

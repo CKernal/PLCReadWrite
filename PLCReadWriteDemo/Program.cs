@@ -38,12 +38,13 @@ namespace PLCReadWriteDemo
             Console.WriteLine("*************************************");
 
             IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
-            PLCReadWrite.PLCControl.PLCControl plcControl = new PLCReadWrite.PLCControl.PLCControl(plc);
+            IPLCControl iPlcControl = new PLCReadWrite.PLCControl.PLCControl(plc);
+            iPlcControl.Open();
 
             for (int i = 0; i < 20; i++)
             {
                 sw.Restart();
-                plcControl.ReadCollection(ref collection);
+                //iPlcControl.ReadCollection(ref collection);
                 sw.Stop();
                 Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
             }
