@@ -126,16 +126,11 @@ namespace PLCReadWrite.PLCControl
         public bool ReadInt16(string startAddr, ushort uSize, ref short[] sData)
         {
             if (uSize == 0) { return false; }
-            OperateResult<byte[]> read = m_plc.Read(startAddr, uSize);
+            OperateResult<short[]> read = m_plc.ReadInt16(startAddr, uSize);
             IsConnected = read.IsSuccess;
             if (IsConnected)
             {
-                short[] tempData = new short[uSize];
-                for (int index = 0; index < uSize; index++)
-                {
-                    tempData[index] = BitConverter.ToInt16(read.Content, index * 2);
-                }
-                sData = tempData;
+                sData = read.Content;
             }
 
             return IsConnected;
@@ -146,20 +141,14 @@ namespace PLCReadWrite.PLCControl
             string startAddr = plcDataCollection.FullStartAddress;
             ushort uSize = (ushort)plcDataCollection.DataLength;
 
-            OperateResult<byte[]> read = m_plc.Read(startAddr, uSize);
+            OperateResult<short[]> read = m_plc.ReadInt16(startAddr, uSize);
             IsConnected = read.IsSuccess;
             if (IsConnected)
             {
-                short[] tempData = new short[uSize];
-                for (int index = 0; index < uSize; index++)
-                {
-                    tempData[index] = m_plc.Transform.TransInt16(read.Content, index * 2);
-                }
-
                 byte[] byteData = new byte[uSize * 2];
                 for (int index = 0; index < uSize; index++)
                 {
-                    byte[] tempByte = BitConverter.GetBytes(tempData[index]);
+                    byte[] tempByte = BitConverter.GetBytes(read.Content[index]);
                     byteData[index * 2 + 0] = tempByte[0];
                     byteData[index * 2 + 1] = tempByte[1];
                 }
