@@ -31,6 +31,10 @@ namespace PLCReadWrite.PLCControl
         /// 双精度浮点型，占4个PLC字地址
         /// </summary>
         Double64Address,
+        /// <summary>
+        /// 字符串型，根据字符串长度的不同占用PLC地址
+        /// </summary>
+        StringAddress
     }
     /// <summary>
     /// PLC数据集合（仅支持同一种地址前缀）
