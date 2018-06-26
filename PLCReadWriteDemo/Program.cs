@@ -25,7 +25,7 @@ namespace PLCReadWriteDemo
         {
             var collection = new PLCDataCollection<short>("温度数据集合");
             sw.Restart();
-            collection.Add("Slot1", "D100", 800);
+            collection.Add("Slot1", "D100", 10);
             collection.Update();
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
@@ -38,13 +38,42 @@ namespace PLCReadWriteDemo
             Console.WriteLine("*************************************");
 
             IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
-            PLCReadWrite.PLCControl.PLCControl iPlcControl = new PLCReadWrite.PLCControl.PLCControl(plc);
-            iPlcControl.Open();
+            PLCReadWrite.PLCControl.PLCControl plcControl = new PLCReadWrite.PLCControl.PLCControl(plc);
+            plcControl.Open();
+
+            sw.Restart();
+            plcControl.AddCollection(0, collection);
+            sw.Stop();
+            Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+
+            sw.Restart();
+            plcControl.AddCollection(0, collection);
+            sw.Stop();
+            Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+
+
+            sw.Restart();
+            plcControl.AddCollection(0, collection);
+            sw.Stop();
+            Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+
+            sw.Restart();
+            var data = plcControl.GetCollection<short>(0);
+            sw.Stop();
+            Console.WriteLine("GetCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            sw.Restart();
+            var data2 = plcControl.GetCollection<short>(0);
+            sw.Stop();
+            Console.WriteLine("GetCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            sw.Restart();
+            var data3 = plcControl.GetCollection<short>(0);
+            sw.Stop();
+            Console.WriteLine("GetCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
             for (int i = 0; i < 20; i++)
             {
                 sw.Restart();
-                iPlcControl.ReadCollection(ref collection);
+                plcControl.ReadCollection(ref collection);
                 sw.Stop();
                 Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
             }
@@ -60,30 +89,10 @@ namespace PLCReadWriteDemo
         {
             var collection = new PLCDataCollection("温度数据集合");
             sw.Restart();
-            collection.Add("Slot1", "D1000", DataType.Int16Address, 8000);
+            collection.Add("Slot1", "D1000", DataType.Int16Address, 100);
             collection.Update();
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
-
-            List<PLCData> query = new List<PLCData>();
-
-            sw.Restart();
-            for (int i = 0; i < 1000; i++)
-            {
-                //query = collection.Where(d => d.NameIndex == 7999).ToList();
-
-                foreach (var item in collection)
-                {
-                    if (item.NameIndex == 7999)
-                    {
-                        query.Add(item);
-                        break;
-                    }
-                }
-            }
-            sw.Stop();
-            Console.WriteLine("query Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
-
 
             //foreach (var item in collection)
             //{
@@ -94,6 +103,32 @@ namespace PLCReadWriteDemo
 
             IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
             PLCReadWrite.PLCControl.String.PLCControl plcControl = new PLCReadWrite.PLCControl.String.PLCControl(plc);
+
+            sw.Restart();
+            plcControl.AddCollection(0, collection);
+            sw.Stop();
+            Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            sw.Restart();
+            plcControl.AddCollection(0, collection);
+            sw.Stop();
+            Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            sw.Restart();
+            plcControl.AddCollection(0, collection);
+            sw.Stop();
+            Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+
+            sw.Restart();
+            var data = plcControl.GetCollection(0);
+            sw.Stop();
+            Console.WriteLine("GetCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            sw.Restart();
+            var data2 = plcControl.GetCollection(0);
+            sw.Stop();
+            Console.WriteLine("GetCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            sw.Restart();
+            var data3 = plcControl.GetCollection(0);
+            sw.Stop();
+            Console.WriteLine("GetCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
             for (int i = 0; i < 20; i++)
             {

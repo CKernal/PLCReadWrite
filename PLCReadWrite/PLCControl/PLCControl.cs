@@ -1,16 +1,19 @@
 ﻿using HslCommunication;
 using System;
-
+using System.Collections.Concurrent;
 
 namespace PLCReadWrite.PLCControl
 {
     /// <summary>
     /// PLC读写控制类，提供批量读写方法
     /// </summary>
-    public class PLCControl : PLCControlBase, IPLCControl
+    public class PLCControl : PLCControlBase
     {
+        private ConcurrentDictionary<int, object> m_plcDataCollectionDictionary;
+
         public PLCControl(IPLC plc) : base(plc)
         {
+            m_plcDataCollectionDictionary = new ConcurrentDictionary<int, object>();
         }
 
         private bool ReadCollectionBit<T>(ref PLCDataCollection<T> plcDataCollection) where T : struct
@@ -108,6 +111,32 @@ namespace PLCReadWrite.PLCControl
             return ReadCollectionNormal(ref plcDataCollection);
         }
 
+
+        #region 内部数据集合操作
+        /// <summary>
+        /// 获取内部数据集合
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public PLCDataCollection<T> GetCollection<T>(int key) where T : struct
+        {
+            if (m_plcDataCollectionDictionary.ContainsKey(key))
+            {
+                return (PLCDataCollection<T>)m_plcDataCollectionDictionary[key];
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 添加或更新内部数据集合
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="collection"></param>
+        public void AddCollection<T>(int key, PLCDataCollection<T> collection) where T : struct
+        {
+            m_plcDataCollectionDictionary.AddOrUpdate(key, collection, (oldkey, oldvalue) => collection);
+        }
+        #endregion
     }
 
 }

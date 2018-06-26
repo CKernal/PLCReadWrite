@@ -11,7 +11,7 @@ namespace PLCReadWrite.PLCControl.String
     /// <summary>
     /// PLC读写控制类，提供批量读写方法
     /// </summary>
-    public class PLCControl : PLCControlBase, IPLCControl
+    public class PLCControl : PLCControlBase
     {
         private ConcurrentDictionary<int, PLCDataCollection> m_plcDataCollectionDictionary;
 

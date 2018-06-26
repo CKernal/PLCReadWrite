@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="IPLC.cs" />
     <Compile Include="PLCControl\DataType.cs" />
-    <Compile Include="PLCControl\IPLCControl.cs" />
     <Compile Include="PLCControl.String\PLCControl.cs" />
     <Compile Include="PLCControl.String\PLCData.cs" />
     <Compile Include="PLCControl.String\PLCDataCollection.cs" />
