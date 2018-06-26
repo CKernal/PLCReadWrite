@@ -38,13 +38,13 @@ namespace PLCReadWriteDemo
             Console.WriteLine("*************************************");
 
             IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
-            IPLCControl iPlcControl = new PLCReadWrite.PLCControl.PLCControl(plc);
+            PLCReadWrite.PLCControl.PLCControl iPlcControl = new PLCReadWrite.PLCControl.PLCControl(plc);
             iPlcControl.Open();
 
             for (int i = 0; i < 20; i++)
             {
                 sw.Restart();
-                //iPlcControl.ReadCollection(ref collection);
+                iPlcControl.ReadCollection(ref collection);
                 sw.Stop();
                 Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
             }
@@ -60,7 +60,7 @@ namespace PLCReadWriteDemo
         {
             var collection = new PLCDataCollection("温度数据集合");
             sw.Restart();
-            collection.Add("Slot1", "D1000", PLCReadWrite.PLCControl.String.DataType.Int16Address, 8000);
+            collection.Add("Slot1", "D1000", DataType.Int16Address, 8000);
             collection.Update();
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
