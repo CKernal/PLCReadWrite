@@ -68,16 +68,8 @@ namespace PLCReadWrite.PLCControl
             try
             {
                 var connect = m_plc.ConnectServer();
-                if (connect.IsSuccess)
-                {
-                    IsConnected = true;
-                    return true;
-                }
-                else
-                {
-                    IsConnected = false;
-                    return false;
-                }
+                IsConnected = connect.IsSuccess;
+                return IsConnected;
             }
             catch (Exception ex)
             {
@@ -95,6 +87,14 @@ namespace PLCReadWrite.PLCControl
                 m_plc.ConnectClose();
                 IsConnected = false;
             }
+        }
+
+        /// <summary>
+        /// 客户端设置为长连接模式，相当于跳过了ConnectServer的结果验证
+        /// </summary>
+        public void SetPersistentConnection()
+        {
+            m_plc.SetPersistentConnection();
         }
 
         /// <summary>

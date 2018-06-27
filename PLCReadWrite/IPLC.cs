@@ -36,6 +36,11 @@ namespace PLCReadWrite
         OperateResult ConnectClose();
 
         /// <summary>
+        /// 在读取数据之前可以调用本方法将客户端设置为长连接模式，相当于跳过了ConnectServer的结果验证，对异形客户端无效
+        /// </summary>
+        void SetPersistentConnection();
+
+        /// <summary>
         /// 从PLC中批量读取位软元件，返回读取结果
         /// </summary>
         /// <param name="address">起始地址</param>
