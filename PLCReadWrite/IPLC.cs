@@ -69,6 +69,7 @@ namespace PLCReadWrite
         public MelsecPlcA1E(string ip, int port) : base(ip, port)
         {
             ConnectTimeOut = 100;
+            ReceiveTimeOut = 100;
         }
 
         public IByteTransform Transform
@@ -82,6 +83,7 @@ namespace PLCReadWrite
         public MelsecPlcMc(string ip, int port) : base(ip, port)
         {
             ConnectTimeOut = 100;
+            ReceiveTimeOut = 100;
         }
 
         public IByteTransform Transform
@@ -95,6 +97,7 @@ namespace PLCReadWrite
         public OmronPlcFins(string ip, int port) : base(ip, port)
         {
             ConnectTimeOut = 100;
+            ReceiveTimeOut = 100;
             //SA1 = 0x0C; // PC网络号，（Source node address）
             //DA1 = 0x0B; // PLC网络号，（destination node address）
             //DA2 = 0x00; // PLC单元号，通常为0（Destination unit address）
