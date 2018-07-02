@@ -3,6 +3,8 @@ using HslCommunication;
 using HslCommunication.Core;
 using HslCommunication.Profinet.Melsec;
 using HslCommunication.Profinet.Omron;
+using System.Net;
+using System.Linq;
 
 namespace PLCReadWrite
 {
@@ -81,14 +83,42 @@ namespace PLCReadWrite
         {
             ConnectTimeOut = 100;
             ReceiveTimeOut = 100;
-            //SA1 = 0x0C; // PC网络号，（Source node address）
-            //DA1 = 0x0B; // PLC网络号，（destination node address）
-            //DA2 = 0x00; // PLC单元号，通常为0（Destination unit address）
+
+            /***************************************************************************
+             * (SA1) PC网络号，一般为PC IP地址的最后一位（Source node address）
+             * (DA1) PLC网络号，一般为PLC IP地址的最后一位（destination node address）
+             * (DA2) PLC单元号，通常为0（Destination unit address）
+            ***************************************************************************/
+
+            string localIp = GetLocalIpAddress();
+            SA1 = GetIpAddressNode(localIp);
+            DA1 = GetIpAddressNode(ip);
+            DA2 = 0x00; 
         }
 
         public IByteTransform Transform
         {
             get { return base.ByteTransform; }
+        }
+
+        private byte GetIpAddressNode(string ip)
+        {
+            IPAddress ipAddress;
+            if (IPAddress.TryParse(ip, out ipAddress))
+            {
+                byte[] tempByte = ipAddress.GetAddressBytes();
+                return tempByte[3];
+            }
+            return default(byte);
+        }
+
+        private string GetLocalIpAddress()
+        {
+            IPAddress localIp = Dns.GetHostAddresses(Dns.GetHostName())
+            .Where(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            .First();
+
+            return localIp.ToString();
         }
     }
 }
