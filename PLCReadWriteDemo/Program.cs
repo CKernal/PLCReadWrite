@@ -14,7 +14,7 @@ namespace PLCReadWriteDemo
         private static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         static void Main(string[] args)
         {
-            PLCCollectionTest();
+            //PLCCollectionTest();
 
             StringPLCCollectionTest();
 
@@ -39,7 +39,7 @@ namespace PLCReadWriteDemo
 
             IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
             PLCReadWrite.PLCControl.PLCControl plcControl = new PLCReadWrite.PLCControl.PLCControl(plc);
-            plcControl.Open();
+            plcControl.SetPersistentConnection();
             plcControl.AddCollection(0, collection);
 
             sw.Restart();
@@ -79,42 +79,32 @@ namespace PLCReadWriteDemo
 
             Console.WriteLine("*************************************");
 
-            IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
+            IPLC plc = new MelsecPlcA1E("127.0.0.1", 5000);
             PLCReadWrite.PLCControl.String.PLCControl plcControl = new PLCReadWrite.PLCControl.String.PLCControl(plc);
+            plcControl.SetPersistentConnection();
 
-            sw.Restart();
-            plcControl.AddCollection(0, collection);
-            sw.Stop();
-            Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
-            sw.Restart();
-            plcControl.AddCollection(0, collection);
-            sw.Stop();
-            Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
-            sw.Restart();
-            plcControl.AddCollection(0, collection);
-            sw.Stop();
-            Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            if (plcControl.Open())
+            {
+                Console.WriteLine("Opened!!!!!!!!!!");
+            }
 
-            sw.Restart();
-            var data = plcControl.GetCollection(0);
-            sw.Stop();
-            Console.WriteLine("GetCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
-            sw.Restart();
-            var data2 = plcControl.GetCollection(0);
-            sw.Stop();
-            Console.WriteLine("GetCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
-            sw.Restart();
-            var data3 = plcControl.GetCollection(0);
-            sw.Stop();
-            Console.WriteLine("GetCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            //sw.Restart();
+            //plcControl.AddCollection(0, collection);
+            //sw.Stop();
+            //Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
-            //for (int i = 0; i < 20; i++)
-            //{
-            //    sw.Restart();
-            //    plcControl.ReadCollection(ref collection);
-            //    sw.Stop();
-            //    Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
-            //}
+            //sw.Restart();
+            //var data = plcControl.GetCollection(0);
+            //sw.Stop();
+
+
+            for (int i = 0; i < 20; i++)
+            {
+                sw.Restart();
+                plcControl.ReadCollection(ref collection);
+                sw.Stop();
+                Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            }
 
             //foreach (var item in collection)
             //{
