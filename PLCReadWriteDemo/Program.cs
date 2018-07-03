@@ -14,7 +14,7 @@ namespace PLCReadWriteDemo
         private static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         static void Main(string[] args)
         {
-            //PLCCollectionTest();
+            PLCCollectionTest();
 
             StringPLCCollectionTest();
 
@@ -37,7 +37,7 @@ namespace PLCReadWriteDemo
 
             Console.WriteLine("*************************************");
 
-            IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
+            IPLC plc = new OmronPlcFins("192.168.100.1", 5000);
             PLCReadWrite.PLCControl.PLCControl plcControl = new PLCReadWrite.PLCControl.PLCControl(plc);
             plcControl.SetPersistentConnection();
             plcControl.AddCollection(0, collection);

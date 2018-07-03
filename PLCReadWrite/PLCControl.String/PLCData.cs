@@ -7,8 +7,8 @@ namespace PLCReadWrite.PLCControl.String
     {
         private const int TIMEOUT_TICKS = 50000000;
 
-        private string m_data = "";
-        private string m_oldData = "";
+        private string m_data = string.Empty;
+        private string m_oldData = string.Empty;
         private DateTime m_lastUpdate;
 
         public string Name { get; set; }
