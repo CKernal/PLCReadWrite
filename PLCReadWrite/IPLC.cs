@@ -53,8 +53,8 @@ namespace PLCReadWrite
     {
         public MelsecPlcA1E(string ip, int port) : base(ip, port)
         {
-            ConnectTimeOut = 100;
-            ReceiveTimeOut = 100;
+            ConnectTimeOut = 300;
+            ReceiveTimeOut = 300;
         }
 
         public IByteTransform Transform
@@ -67,8 +67,8 @@ namespace PLCReadWrite
     {
         public MelsecPlcMc(string ip, int port) : base(ip, port)
         {
-            ConnectTimeOut = 100;
-            ReceiveTimeOut = 100;
+            ConnectTimeOut = 300;
+            ReceiveTimeOut = 300;
         }
 
         public IByteTransform Transform
@@ -81,8 +81,8 @@ namespace PLCReadWrite
     {
         public OmronPlcFins(string ip, int port) : base(ip, port)
         {
-            ConnectTimeOut = 100;
-            ReceiveTimeOut = 100;
+            ConnectTimeOut = 300;
+            ReceiveTimeOut = 300;
 
             /***************************************************************************
              * (SA1) PC网络号，一般为PC IP地址的最后一位（Source node address）
