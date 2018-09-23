@@ -57,41 +57,7 @@ namespace PLCReadWrite.PLCControl.String
             IsConnected = read.IsSuccess;
             if (IsConnected)
             {
-                int sAddr = plcDataCollection.StartAddr;
-
-                foreach (var d in plcDataCollection)
-                {
-                    //根据数据类型为每个PLCData赋值
-                    int index = d.Addr - sAddr;
-                    switch (d.DataType)
-                    {
-                        case DataType.BoolAddress:
-                            d.Data = m_plc.Transform.TransBool(read.Content, index).ToString();
-                            break;
-                        case DataType.Int16Address:
-                            d.Data = m_plc.Transform.TransInt16(read.Content, index * 2).ToString();
-                            break;
-                        case DataType.Int32Address:
-                            d.Data = m_plc.Transform.TransInt32(read.Content, index * 2).ToString();
-                            break;
-                        case DataType.Int64Address:
-                            d.Data = m_plc.Transform.TransInt64(read.Content, index * 2).ToString();
-                            break;
-                        case DataType.Float32Address:
-                            d.Data = m_plc.Transform.TransSingle(read.Content, index * 2).ToString();
-                            break;
-                        case DataType.Double64Address:
-                            d.Data = m_plc.Transform.TransDouble(read.Content, index * 2).ToString();
-                            break;
-                        case DataType.StringAddress:
-                            //PLC中一个字地址为2个字节（2Byte），可储存两个ASCII字符，一个中文字符。需要解码的字节数为：（PLC字地址长度*2）
-                            //此处只支持ASCII字符，若想支持中文读取，可使用支持中文的编码如Unicode，PLC端也相应使用Unicode方式写入
-                            //d.Data = Encoding.ASCII.GetString(read.Content, index * 2, d.Length * 2);
-                            d.Data = m_plc.Transform.TransString(read.Content, index * 2, d.Length * 2, Encoding.ASCII).ToString();
-                            break;
-                    }
-                }
-
+                SetPLCDataCollection(plcDataCollection, read);
             }
 
             return IsConnected;
@@ -168,44 +134,48 @@ namespace PLCReadWrite.PLCControl.String
                     return;
                 }
 
-                int sAddr = plcDataCollection.StartAddr;
-                foreach (var d in plcDataCollection)
-                {
-                    //根据数据类型为每个PLCData赋值
-                    int index = d.Addr - sAddr;
-                    switch (d.DataType)
-                    {
-                        case DataType.BoolAddress:
-                            d.Data = m_plc.Transform.TransBool(read.Content, index).ToString();
-                            break;
-                        case DataType.Int16Address:
-                            d.Data = m_plc.Transform.TransInt16(read.Content, index * 2).ToString();
-                            break;
-                        case DataType.Int32Address:
-                            d.Data = m_plc.Transform.TransInt32(read.Content, index * 2).ToString();
-                            break;
-                        case DataType.Int64Address:
-                            d.Data = m_plc.Transform.TransInt64(read.Content, index * 2).ToString();
-                            break;
-                        case DataType.Float32Address:
-                            d.Data = m_plc.Transform.TransSingle(read.Content, index * 2).ToString();
-                            break;
-                        case DataType.Double64Address:
-                            d.Data = m_plc.Transform.TransDouble(read.Content, index * 2).ToString();
-                            break;
-                        case DataType.StringAddress:
-                            //PLC中一个字地址为2个字节（2Byte），可储存两个ASCII字符，一个中文字符。需要解码的字节数为：（PLC字地址长度*2）
-                            //此处只支持ASCII字符，若想支持中文读取，可使用支持中文的编码如Unicode，PLC端也相应使用Unicode方式写入
-                            //d.Data = Encoding.ASCII.GetString(read.Content, index * 2, d.Length * 2);
-                            d.Data = m_plc.Transform.TransString(read.Content, index * 2, d.Length * 2, Encoding.ASCII).ToString();
-                            break;
-                    }
-                }
-
+                SetPLCDataCollection(plcDataCollection, read);
                 tcs.SetResult(true);
             });
 
             return tcs.Task;
+        }
+
+        private void SetPLCDataCollection(PLCDataCollection plcDataCollection, OperateResult<byte[]> read)
+        {
+            int sAddr = plcDataCollection.StartAddr;
+            foreach (var d in plcDataCollection)
+            {
+                //根据数据类型为每个PLCData赋值
+                int index = d.Addr - sAddr;
+                switch (d.DataType)
+                {
+                    case DataType.BoolAddress:
+                        d.Data = m_plc.Transform.TransBool(read.Content, index).ToString();
+                        break;
+                    case DataType.Int16Address:
+                        d.Data = m_plc.Transform.TransInt16(read.Content, index * 2).ToString();
+                        break;
+                    case DataType.Int32Address:
+                        d.Data = m_plc.Transform.TransInt32(read.Content, index * 2).ToString();
+                        break;
+                    case DataType.Int64Address:
+                        d.Data = m_plc.Transform.TransInt64(read.Content, index * 2).ToString();
+                        break;
+                    case DataType.Float32Address:
+                        d.Data = m_plc.Transform.TransSingle(read.Content, index * 2).ToString();
+                        break;
+                    case DataType.Double64Address:
+                        d.Data = m_plc.Transform.TransDouble(read.Content, index * 2).ToString();
+                        break;
+                    case DataType.StringAddress:
+                        //PLC中一个字地址为2个字节（2Byte），可储存两个ASCII字符，一个中文字符。需要解码的字节数为：（PLC字地址长度*2）
+                        //此处只支持ASCII字符，若想支持中文读取，可使用支持中文的编码如Unicode，PLC端也相应使用Unicode方式写入
+                        //d.Data = Encoding.ASCII.GetString(read.Content, index * 2, d.Length * 2);
+                        d.Data = m_plc.Transform.TransString(read.Content, index * 2, d.Length * 2, Encoding.ASCII).ToString();
+                        break;
+                }
+            }
         }
         /// <summary>
         /// 异步读取一个PLC数据集
