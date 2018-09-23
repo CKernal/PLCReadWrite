@@ -5,6 +5,7 @@ using HslCommunication.Profinet.Melsec;
 using HslCommunication.Profinet.Omron;
 using System.Net;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PLCReadWrite
 {
@@ -47,6 +48,18 @@ namespace PLCReadWrite
 
         OperateResult Write(string address, bool value);
         OperateResult Write(string address, bool[] values);
+
+        void BeginRead(string address, ushort length, Action<OperateResult<byte[]>> readCallback);
+        void BeginReadBool(string address, Action<OperateResult<bool>> readCallback);
+        void BeginReadBool(string address, ushort length, Action<OperateResult<bool[]>> readCallback);
+        void BeginReadInt16(string address, Action<OperateResult<short>> readCallback);
+        void BeginReadInt16(string address, ushort length, Action<OperateResult<short[]>> readCallback);
+
+        void BeginWrite(string address, byte[] value, Action<OperateResult> writeCallback);
+        void BeginWrite(string address, bool value, Action<OperateResult> writeCallback);
+        void BeginWrite(string address, bool[] values, Action<OperateResult> writeCallback);
+        void BeginWrite(string address, short value, Action<OperateResult> writeCallback);
+        void BeginWrite(string address, short[] values, Action<OperateResult> writeCallback);
     }
 
     public class MelsecPlcA1E : MelsecA1ENet, IPLC
@@ -63,7 +76,7 @@ namespace PLCReadWrite
         }
     }
 
-    public class MelsecPlcMc : MelsecMcNet, IPLC
+    public class MelsecPlcMc : MelsecMcNet//, IPLC
     {
         public MelsecPlcMc(string ip, int port) : base(ip, port)
         {
@@ -77,7 +90,7 @@ namespace PLCReadWrite
         }
     }
 
-    public class OmronPlcFins : OmronFinsNet, IPLC
+    public class OmronPlcFins : OmronFinsNet//, IPLC
     {
         public OmronPlcFins(string ip, int port) : base(ip, port)
         {

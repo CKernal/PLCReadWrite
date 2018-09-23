@@ -161,6 +161,98 @@ namespace PLCReadWrite.PLCControl
             IsConnected = write.IsSuccess;
             return IsConnected;
         }
+
+        public Task<OperateResult<byte[]>> ReadAsync(string address, ushort length)
+        {
+            var tcs = new TaskCompletionSource<OperateResult<byte[]>>();
+            m_plc.BeginRead(address, length, read =>
+            {
+                tcs.SetResult(read);
+            });
+            return tcs.Task;
+        }
+        public Task<OperateResult<bool>> ReadBoolAsync(string address)
+        {
+            var tcs = new TaskCompletionSource<OperateResult<bool>>();
+            m_plc.BeginReadBool(address, read =>
+            {
+                tcs.SetResult(read);
+            });
+            return tcs.Task;
+        }
+        public Task<OperateResult<bool[]>> ReadBoolAsync(string address, ushort length)
+        {
+            var tcs = new TaskCompletionSource<OperateResult<bool[]>>();
+            m_plc.BeginReadBool(address, length, read =>
+            {
+                tcs.SetResult(read);
+            });
+            return tcs.Task;
+        }
+        public Task<OperateResult<short>> ReadInt16Async(string address)
+        {
+            var tcs = new TaskCompletionSource<OperateResult<short>>();
+            m_plc.BeginReadInt16(address, read =>
+            {
+                tcs.SetResult(read);
+            });
+            return tcs.Task;
+        }
+        public Task<OperateResult<short[]>> ReadInt16Async(string address, ushort length)
+        {
+            var tcs = new TaskCompletionSource<OperateResult<short[]>>();
+            m_plc.BeginReadInt16(address, length, read =>
+            {
+                tcs.SetResult(read);
+            });
+            return tcs.Task;
+        }
+
+        public Task<OperateResult> WriteAsync(string address, byte[] value)
+        {
+            var tcs = new TaskCompletionSource<OperateResult>();
+            m_plc.BeginWrite(address, value, read =>
+            {
+                tcs.SetResult(read);
+            });
+            return tcs.Task;
+        }
+        public Task<OperateResult> WriteAsync(string address, bool value)
+        {
+            var tcs = new TaskCompletionSource<OperateResult>();
+            m_plc.BeginWrite(address, value, read =>
+            {
+                tcs.SetResult(read);
+            });
+            return tcs.Task;
+        }
+        public Task<OperateResult> WriteAsync(string address, bool[] values)
+        {
+            var tcs = new TaskCompletionSource<OperateResult>();
+            m_plc.BeginWrite(address, values, read =>
+            {
+                tcs.SetResult(read);
+            });
+            return tcs.Task;
+        }
+        public Task<OperateResult> WriteAsync(string address, short value)
+        {
+            var tcs = new TaskCompletionSource<OperateResult>();
+            m_plc.BeginWrite(address, value, read =>
+            {
+                tcs.SetResult(read);
+            });
+            return tcs.Task;
+        }
+        public Task<OperateResult> WriteAsync(string address, short[] values)
+        {
+            var tcs = new TaskCompletionSource<OperateResult>();
+            m_plc.BeginWrite(address, values, read =>
+            {
+                tcs.SetResult(read);
+            });
+            return tcs.Task;
+        }
     }
 
     #region PLC状态改变的事件参数定义

@@ -14,7 +14,7 @@ namespace PLCReadWriteDemo
         private static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         static void Main(string[] args)
         {
-            PLCCollectionTest();
+            //PLCCollectionTest();
 
             StringPLCCollectionTest();
 
@@ -37,7 +37,7 @@ namespace PLCReadWriteDemo
 
             Console.WriteLine("*************************************");
 
-            IPLC plc = new OmronPlcFins("192.168.100.1", 5000);
+            IPLC plc = new MelsecPlcA1E("192.168.100.1", 5000);
             PLCReadWrite.PLCControl.PLCControl plcControl = new PLCReadWrite.PLCControl.PLCControl(plc);
             plcControl.SetPersistentConnection();
             plcControl.AddCollection(0, collection);
@@ -67,7 +67,7 @@ namespace PLCReadWriteDemo
         {
             var collection = new PLCDataCollection("温度数据集合");
             sw.Restart();
-            collection.Add("Slot1", "D1000", DataType.Int16Address, 100);
+            collection.Add("Slot1", "D100", DataType.Int16Address, 64);
             collection.Update();
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
@@ -76,10 +76,20 @@ namespace PLCReadWriteDemo
             //{
             //    Console.WriteLine(item.ToString());
             //}
+            //sw.Restart();
+            //var query = collection.Where(d => d.NameIndex == 999);
+            //List<PLCData> list = query.ToList();
+            //sw.Stop();
+            //Console.WriteLine("query.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+
+            //foreach (var item in list)
+            //{
+            //    Console.WriteLine(item.ToString());
+            //}
 
             Console.WriteLine("*************************************");
 
-            IPLC plc = new MelsecPlcA1E("127.0.0.1", 5000);
+            IPLC plc = new MelsecPlcA1E("192.168.0.100", 5000);
             PLCReadWrite.PLCControl.String.PLCControl plcControl = new PLCReadWrite.PLCControl.String.PLCControl(plc);
             plcControl.SetPersistentConnection();
 
@@ -88,28 +98,38 @@ namespace PLCReadWriteDemo
                 Console.WriteLine("Opened!!!!!!!!!!");
             }
 
-            //sw.Restart();
-            //plcControl.AddCollection(0, collection);
-            //sw.Stop();
-            //Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            sw.Restart();
+            plcControl.AddCollection(0, collection);
+            sw.Stop();
+            Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
             //sw.Restart();
             //var data = plcControl.GetCollection(0);
             //sw.Stop();
 
 
-            for (int i = 0; i < 20; i++)
+            //plcControl.ReadBoolAsync("M100",2).ContinueWith(ret =>
+            //{
+            //    Console.WriteLine("ReadBoolAsync:{0}", ret.Result.Content[0]);
+            //});
+
+            //for (int i = 0; i < 20; i++)
+            //{
+            //    sw.Restart();
+            //    plcControl.ReadCollection(ref collection);
+            //    sw.Stop();
+            //    Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            //}
+
+            var task = plcControl.ReadCollectionAsync(collection);
+
+            task.Wait();
+
+            foreach (var item in collection)
             {
-                sw.Restart();
-                plcControl.ReadCollection(ref collection);
-                sw.Stop();
-                Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+                Console.WriteLine(item.ToString());
             }
 
-            //foreach (var item in collection)
-            //{
-            //    Console.WriteLine(item.ToString());
-            //}
             Console.WriteLine("*************************************");
         }
 

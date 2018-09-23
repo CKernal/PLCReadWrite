@@ -31,7 +31,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HslCommunication, Version=5.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HslCommunication.5.1.2\lib\net35\HslCommunication.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\HslCommunication\HslCommunication_Net35\bin\Release\HslCommunication.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
