@@ -1,4 +1,6 @@
-﻿using PLCReadWrite;
+﻿using HslCommunication;
+using HslCommunication.Core;
+using PLCReadWrite;
 using PLCReadWrite.PLCControl;
 using PLCReadWrite.PLCControl.String;
 using System;
@@ -12,6 +14,13 @@ namespace PLCReadWriteDemo
     class Program
     {
         private static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+
+        private static readonly object locker = new object();
+
+        private static SimpleHybirdLock simpleHybird = new SimpleHybirdLock();
+
+
+
         static void Main(string[] args)
         {
             //PLCCollectionTest();
@@ -72,6 +81,13 @@ namespace PLCReadWriteDemo
             sw.Stop();
             Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
+            var collection2 = new PLCDataCollection("温度数据集合");
+            sw.Restart();
+            collection2.Add("Slot1", "D100", DataType.Int16Address, 64);
+            collection2.Update();
+            sw.Stop();
+            Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+
             //foreach (var item in collection)
             //{
             //    Console.WriteLine(item.ToString());
@@ -93,13 +109,22 @@ namespace PLCReadWriteDemo
             PLCReadWrite.PLCControl.String.PLCControl plcControl = new PLCReadWrite.PLCControl.String.PLCControl(plc);
             plcControl.SetPersistentConnection();
 
-            if (plcControl.Open())
-            {
-                Console.WriteLine("Opened!!!!!!!!!!");
-            }
+            IPLC plc2 = new MelsecPlcA1E("192.168.0.101", 5000);
+            PLCReadWrite.PLCControl.String.PLCControl plcControl2 = new PLCReadWrite.PLCControl.String.PLCControl(plc2);
+            plcControl2.SetPersistentConnection();
+
+            //if (plcControl.Open())
+            //{
+            //    Console.WriteLine("Opened!!!!!!!!!!");
+            //}
 
             sw.Restart();
             plcControl.AddCollection(0, collection);
+            sw.Stop();
+            Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+
+            sw.Restart();
+            plcControl2.AddCollection(0, collection);
             sw.Stop();
             Console.WriteLine("AddCollection Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
 
@@ -121,14 +146,123 @@ namespace PLCReadWriteDemo
             //    Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
             //}
 
-            var task = plcControl.ReadCollectionAsync(collection);
+            //for (short i = 0; i < 64; i++)
+            //{
+            //    string address = string.Format("D{0}", i + 100);
+            //    var taskWrite = plcControl.WriteAsync(address, i);
+            //    taskWrite.Wait();
+            //    Console.WriteLine("WriteAsync {0}:{1}", address, taskWrite.Result.IsSuccess);
+            //}
+            Console.WriteLine("*************************************");
 
-            task.Wait();
+            //for (int i = 0; i < 20; i++)
+            //{
+            //    sw.Restart();
+            //    var task = plcControl.ReadCollectionAsync(collection);
+            //    var task2 = plcControl2.ReadCollectionAsync(collection2);
+            //    task.Wait();
+            //    task2.Wait();
+            //    sw.Stop();
+            //    Console.WriteLine("Elapsed.TotalMilliseconds:{0}", sw.Elapsed.TotalMilliseconds);
+            //}
+            List<PLCReadWrite.PLCControl.String.PLCControl> plcList = new List<PLCReadWrite.PLCControl.String.PLCControl>();
 
-            foreach (var item in collection)
-            {
-                Console.WriteLine(item.ToString());
-            }
+            plcList.Add(plcControl);
+            plcList.Add(plcControl2);
+
+            Task<OperateResult>[] taskWrite = new Task<OperateResult>[plcList.Count];
+
+            Task.Factory.StartNew(() =>
+                {
+                    var sw2 = new System.Diagnostics.Stopwatch();
+                    
+                    for (int i = 0; i < 10; i++)
+                    {
+                        sw2.Restart();
+
+                        
+                        //lock (locker)
+                        {
+                            Console.WriteLine("开始T:{0}", DateTime.Now.ToString("HH:mm:ss.fff"));
+                            var task = plcControl.WriteAsync("D1", 10);
+                            Console.WriteLine("第1个:{0}", DateTime.Now.ToString("HH:mm:ss.fff"));
+                            var task2 = plcControl2.WriteAsync("D1", 10);
+                            Console.WriteLine("第2个:{0}", DateTime.Now.ToString("HH:mm:ss.fff"));
+                            task.Wait();
+                            task2.Wait();
+                            //task2.Wait();
+
+                            Console.WriteLine("完成1T:{0} {1} ", DateTime.Now.ToString("HH:mm:ss.fff"), task.Result.IsSuccess);
+                            Console.WriteLine("完成2T:{0} {1} ", DateTime.Now.ToString("HH:mm:ss.fff"), task2.Result.IsSuccess);
+                        }
+
+                        sw2.Stop();
+                        Console.WriteLine("Sw2 Elapsed.TotalMilliseconds:{0}", sw2.Elapsed.TotalMilliseconds);
+
+
+                        //sw2.Restart();
+
+                        //for (int index = 0; index < plcList.Count; index++)
+                        //{
+                        //    taskWrite[index] = plcList[index].WriteAsync("D1", 10);
+                        //}
+
+                        //foreach (var item in taskWrite)
+                        //{
+                        //    item.Wait();
+                        //}
+
+                        //foreach (var item in taskWrite)
+                        //{
+                        //    Console.WriteLine("WriteAsync : {0} {1}", item.Result.Message, i);
+                        //}
+
+                        //sw2.Stop();
+                        //Console.WriteLine("Sw2 Elapsed.TotalMilliseconds:{0}", sw2.Elapsed.TotalMilliseconds);
+
+                        //Task<bool>[] taskAarry = new Task<bool>[plcList.Count];
+                        //for (int index = 0; index < plcList.Count; index++)
+                        //{
+                        //    taskAarry[index] = plcList[index].ReadCollectionAsync(plcList[index].GetCollection(0));
+                        //}
+
+                        //foreach (var item in taskAarry)
+                        //{
+                        //    Console.WriteLine("ReadCollectionAsync1 : {0} {1}", item.Result, i);
+                        //}
+
+                        Console.WriteLine("*************************************");
+                    }
+
+                });
+
+            //Task.Factory.StartNew(() =>
+            //{
+            //    var sw3 = new System.Diagnostics.Stopwatch();
+            //    sw3.Restart();
+            //    for (int i = 0; i < 10; i++)
+            //    {
+            //        //lock (locker)
+            //        {
+            //            Console.WriteLine("线程2开始T:{0}", DateTime.Now.ToString("HH:mm:ss.fff"));
+            //            var ret = plcControl.WriteAsync("D99", 8888);
+            //            Console.WriteLine("线程2第1个:{0}", DateTime.Now.ToString("HH:mm:ss.fff"));
+            //            ret.Wait();
+            //            Console.WriteLine("WriteInt16 : {0} {1} {2}", ret.Result.IsSuccess, i, DateTime.Now.ToString("HH:mm:ss.fff"));
+            //            //if (!ret.Result.IsSuccess)
+            //            //{
+            //            //    Console.WriteLine("WriteInt16 : {0} {1}", ret.Result.IsSuccess, i);
+            //            //}
+            //        }
+            //    }
+            //    sw3.Stop();
+            //    Console.WriteLine("Sw3 Elapsed.TotalMilliseconds:{0}", sw3.Elapsed.TotalMilliseconds);
+            //});
+
+            //foreach (var item in collection)
+            //{
+            //    Console.WriteLine(item.ToString());
+            //}
 
             Console.WriteLine("*************************************");
         }

@@ -76,7 +76,7 @@ namespace PLCReadWrite
         }
     }
 
-    public class MelsecPlcMc : MelsecMcNet//, IPLC
+    public class MelsecPlcMc : MelsecMcNet, IPLC
     {
         public MelsecPlcMc(string ip, int port) : base(ip, port)
         {
@@ -90,7 +90,7 @@ namespace PLCReadWrite
         }
     }
 
-    public class OmronPlcFins : OmronFinsNet//, IPLC
+    public class OmronPlcFins : OmronFinsNet, IPLC
     {
         public OmronPlcFins(string ip, int port) : base(ip, port)
         {

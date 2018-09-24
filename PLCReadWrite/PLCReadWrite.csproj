@@ -30,9 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HslCommunication, Version=5.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="HslCommunication, Version=5.3.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\HslCommunication\HslCommunication_Net35\bin\Release\HslCommunication.dll</HintPath>
+      <HintPath>..\..\HslCommunication\HslCommunication_Net35\bin\Debug\HslCommunication.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
