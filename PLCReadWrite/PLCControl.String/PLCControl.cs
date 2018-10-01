@@ -29,22 +29,7 @@ namespace PLCReadWrite.PLCControl.String
             IsConnected = read.IsSuccess;
             if (IsConnected)
             {
-                byte[] byteData = new byte[uSize * 2];
-                for (int index = 0; index < uSize; index++)
-                {
-                    byte[] tempByte = BitConverter.GetBytes(read.Content[index]);
-                    byteData[index * 2 + 0] = tempByte[0];
-                    byteData[index * 2 + 1] = tempByte[1];
-                }
-
-                System.Collections.BitArray bitArray = new System.Collections.BitArray(byteData);
-                int sAddr = plcDataCollection.StartAddr;
-
-                foreach (var d in plcDataCollection)
-                {
-                    int index = ((d.Addr - sAddr) * 16) + d.Bit;
-                    d.Data = bitArray[index].ToString();
-                }
+                SetPLCDataCollection(plcDataCollection, read);
             }
             return IsConnected;
         }
@@ -97,23 +82,7 @@ namespace PLCReadWrite.PLCControl.String
                     return;
                 }
 
-                byte[] byteData = new byte[uSize * 2];
-                for (int index = 0; index < uSize; index++)
-                {
-                    byte[] tempByte = BitConverter.GetBytes(read.Content[index]);
-                    byteData[index * 2 + 0] = tempByte[0];
-                    byteData[index * 2 + 1] = tempByte[1];
-                }
-
-                System.Collections.BitArray bitArray = new System.Collections.BitArray(byteData);
-                int sAddr = plcDataCollection.StartAddr;
-
-                foreach (var d in plcDataCollection)
-                {
-                    int index = ((d.Addr - sAddr) * 16) + d.Bit;
-                    d.Data = bitArray[index].ToString();
-                }
-
+                SetPLCDataCollection(plcDataCollection, read);
                 tcs.SetResult(true);
             });
 
@@ -175,6 +144,28 @@ namespace PLCReadWrite.PLCControl.String
                         d.Data = m_plc.Transform.TransString(read.Content, index * 2, d.Length * 2, Encoding.ASCII).ToString();
                         break;
                 }
+            }
+        }
+
+        private void SetPLCDataCollection(PLCDataCollection plcDataCollection, OperateResult<short[]> read)
+        {
+            ushort uSize = (ushort)plcDataCollection.DataLength;
+
+            byte[] byteData = new byte[uSize * 2];
+            for (int index = 0; index < uSize; index++)
+            {
+                byte[] tempByte = BitConverter.GetBytes(read.Content[index]);
+                byteData[index * 2 + 0] = tempByte[0];
+                byteData[index * 2 + 1] = tempByte[1];
+            }
+
+            System.Collections.BitArray bitArray = new System.Collections.BitArray(byteData);
+            int sAddr = plcDataCollection.StartAddr;
+
+            foreach (var d in plcDataCollection)
+            {
+                int index = ((d.Addr - sAddr) * 16) + d.Bit;
+                d.Data = bitArray[index].ToString();
             }
         }
         /// <summary>
